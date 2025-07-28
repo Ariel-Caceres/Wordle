@@ -10,85 +10,120 @@ interface Palabra {
 export const App = () => {
   const [letras, setLetras] = useState<string[]>([])
   const [respuesta, setRespuesta] = useState<string>("")
-  const [cantLetras, setCantLetras] = useState<number[]>([1, 2, 3, 4, 5])
+  const [cantLetras, setCantLetras] = useState<number[]>([])
   const [intentos, setIntentos] = useState<Palabra[]>([])
   const [finJuego, setFinJuego] = useState<boolean>(false)
   const [animar, setAnimar] = useState<boolean>(false)
-  const [arrayAnimaciones, setArrayDeAnimaciones] = useState<boolean[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [mensajeFinal, setMensajeFinal] = useState<string>()
+  const totalVidas = 5
+  const vidasRestantes = totalVidas - intentos.length
+
 
   const updateWord = async (respuesta: string) => {
-    const res = await fetch("http://localhost:3000/done", {
-      method: "PUT",
-      headers: {
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify({
-        palabra: respuesta,
+    setLoading(true)
+    try {
+      const res = await fetch("http://localhost:3000/done", {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+          palabra: respuesta,
+        })
       })
-    })
-    if (!res) throw new Error("No anda ja");
-
-  }
-
-  useEffect(() => {
-    const resuelto = localStorage.getItem("resuelto")
-    if (!resuelto) {
-      const fetchData = async () => {
-        const res = await fetch("http://localhost:3000/word")
-        const data = await res.json()
-        setRespuesta(data.name.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
-        const numero = []
-        for (let i = 0; i < data.name.length; i++) {
-          numero.push(i + 1)
-        }
-        setCantLetras(numero)
-        if (cantLetras.length == numero.length) {
-          setAnimar(true)
-        }
-
-      }
-      fetchData()
-    } else {
-      setFinJuego(true)
-      const respuesta = localStorage.getItem("respuesta")
-      if (respuesta) {
-        const jsonrespuesta = JSON.parse(respuesta)
-        setIntentos(jsonrespuesta)
-        const respuestaCorrecta = jsonrespuesta[jsonrespuesta.length - 1]
-        setRespuesta(respuestaCorrecta.palabra)
-        const cantLetrasFetch = []
-        for (let i = 0; i < respuestaCorrecta.palabra.length; i++) {
-          cantLetrasFetch.push(i + 1)
-        }
-        setCantLetras(cantLetrasFetch)
-      }
+      const data = await res.json()
+      if (!res.ok) throw new Error("Error al actualizar el estado de la palabra", data.message);
+      setLoading(false)
+    } catch (error) {
+      console.log("Error al actualizar el estado de la palabra", error)
     }
 
+  }
+  const forCantLetras = (parametro: string) => {
+    const arrayAux = []
+    for (let i = 0; i < parametro.length; i++) {
+      arrayAux.push(i + 1)
+    }
+    setCantLetras(arrayAux)
+  }
+  const vaciarLocalStorage = () => {
+    if (vidasRestantes != 0) {
+
+      localStorage.removeItem("resuelto")
+      localStorage.removeItem("respuesta")
+      localStorage.removeItem("respuestaCorrecta")
+      setMensajeFinal("")
+      window.location.reload()
+    } else {
+      console.log("te quedaste sin vidas")
+    }
+  }
+  const quitarAcentos = (letra: string) => {
+    return letra.replace(/[áÁ]/g, 'A')
+      .replace(/[éÉ]/g, 'E')
+      .replace(/[íÍ]/g, 'I')
+      .replace(/[óÓ]/g, 'O')
+      .replace(/[úÚ]/g, 'U')
+  }
+  const corazonesAnimacion = () => {
+    if (vidasRestantes <= 2) {
+      return "animate-girar"
+    }
+
+  }
+  //FETCH DE LA PALABRA
+  useEffect(() => {
+
+    const resuelto = localStorage.getItem("resuelto")
+    const intentosLS = localStorage.getItem("respuesta")
+    if (!resuelto && !intentosLS && vidasRestantes !== 0) {
+      const fetchData = async () => {
+        setLoading(true)
+        try {
+          const res = await fetch("http://localhost:3000/word")
+          const data = await res.json()
+          if (!res.ok) {
+            throw new Error("Error al traer productos"), await data.message;
+          }
+          setRespuesta(quitarAcentos(data.name.toUpperCase()))
+          localStorage.setItem("respuestaCorrecta", quitarAcentos(data.name.toUpperCase()))
+          forCantLetras(data.name)
+          setLoading(false)
+        } catch (error) {
+          console.log("Error al traer palabra", error)
+
+        }
+      }
+      fetchData()
+    }
   }, [])
 
-  const vacialLocalStorage = () => {
-    localStorage.removeItem("resuelto")
-    localStorage.removeItem("respuesta")
-    window.location.reload()
-  }
 
+  // CONSOLE LOG PARA CONTROLAR 
   useEffect(() => {
+    console.log(respuesta)
+  }, [respuesta])
+
+
+  //Ingreso Letras
+  useEffect(() => {
+
+    if (intentos.length >= 5 || finJuego) return
 
     const ingresoLetras = (e: KeyboardEvent) => {
       if (e.key === "Backspace") {
         setLetras(prev => prev.slice(0, -1))
-        setArrayDeAnimaciones(prev => prev.slice(0, -1))
 
-        if (intentos.length == 5) return
-        if (cantLetras.length <= respuesta.length) {
+        if (cantLetras.length < respuesta.length) {
           setCantLetras(prev => [...prev, prev.length + 1])
         }
       }
 
-      if (!/^[a-zA-Z]$/.test(e.key)) {
+      if (!/^[a-zA-Z]$/.test(e.key) && e.key !== "ñ" && e.key !== "Ñ") {
         return;
       }
-      if (intentos.length <= 4) {
+      if (!finJuego) {
         setLetras(prev => {
           if (prev.length >= respuesta.length) {
             return prev
@@ -97,24 +132,22 @@ export const App = () => {
         })
       }
       setCantLetras(prev => prev.slice(0, -1))
-      setArrayDeAnimaciones(prev => [...prev, true])
-
-
     }
     window.addEventListener("keydown", ingresoLetras)
-
     return () => {
       window.removeEventListener("keydown", ingresoLetras)
     }
 
-  }, [cantLetras, intentos.length, arrayAnimaciones, respuesta.length])
+  }, [cantLetras.length, intentos.length, respuesta.length, finJuego])
 
+
+  //CHECK Resultados
   useEffect(() => {
 
     const checkResults = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && letras.length == respuesta.length && intentos.length <= 4) {
+      if (e.key === "Enter" && letras.length == respuesta.length && !finJuego) {
         const nuevosColores: string[] = letras.map((l, i) => {
-          if (l === respuesta[i]) return "bg-green-400 animate-pulse"
+          if (l === respuesta[i]) return `bg-green-400 animate-pulse  hover:-translate-y-20`
           if (l !== respuesta[i] && respuesta.includes(l)) return "bg-yellow-400"
           return "bg-red-400"
         })
@@ -130,14 +163,11 @@ export const App = () => {
           localStorage.setItem("resuelto", "true")
           updateWord(respuesta)
           setFinJuego(true)
+          setCantLetras([])
+          setMensajeFinal("ganaste")
         }
         setLetras([])
-        const arrayAux = []
-        for (let i = 0; i < respuesta.length; i++) {
-          arrayAux.push(i + 1)
-        }
-        setCantLetras(arrayAux)
-
+        forCantLetras(respuesta)
       }
 
     }
@@ -145,46 +175,102 @@ export const App = () => {
     return () => {
       window.removeEventListener("keydown", checkResults)
     }
-  }, [letras, respuesta, cantLetras, intentos.length])
+  }, [letras, respuesta, intentos.length, finJuego])
 
+
+  //Agregar intentos al LS
   useEffect(() => {
-
     if (intentos.length != 0) {
       localStorage.setItem("respuesta", JSON.stringify(intentos))
     }
-    const respuestaStorage = localStorage.getItem("resuelto")
-    if (respuestaStorage) {
-
-      setCantLetras([])
-    }
 
   }, [intentos])
-  
+
+
+  //Fin del juego si hay 5 intentos
   useEffect(() => {
+    if (intentos.length >= 5) {
+      setCantLetras([]);
+      setFinJuego(true)
+    }
+
+    const resuelto = localStorage.getItem("resuelto")
+    if (intentos.length >= 5 && !resuelto) {
+      setMensajeFinal("perdiste")
+    }
+    if (resuelto) {
+      setCantLetras([]);
+      setMensajeFinal("ganaste")
+    }
+  }, [intentos.length]);
+
+
+  //CHECK localStorage
+  useEffect(() => {
+    setLoading(true)
+    const respuestaStorage = localStorage.getItem("resuelto")
+    if (respuestaStorage) {
+      setCantLetras([])
+      setFinJuego(true)
+      setMensajeFinal("ganaste")
+    }
+
+    const intentosLS = localStorage.getItem("respuesta")
+    const respuestaCorrectaLS = localStorage.getItem("respuestaCorrecta")
+    if (intentosLS && respuestaCorrectaLS) {
+      setIntentos(JSON.parse(intentosLS))
+      setRespuesta(respuestaCorrectaLS)
+      forCantLetras(respuestaCorrectaLS)
+      setLoading(false)
+    }
     const timer = setTimeout(() => {
       setAnimar(true)
     }, 10)
     return () => clearTimeout(timer)
   }, [])
 
+
+
   return (
 
     <>
-      <h1 className={`justify-self-center text-2xl p-10 transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>Wordle locura total y absoluta</h1>
+      <h1 className={` font-press justify-self-center text-3xl p-10 transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>Wordle </h1>
 
-      <div className={`flex flex-col`}>
-        {intentos.map((intento, i) => (
-          <div key={i} className={`flex gap-2 justify-center mb-5 `}>
-            {intento.palabra.split("").map((letra, i) => (
-              <div key={i} className={`w-[60px] h-[60px] border-2 border-black-400 flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out delay-75 duration-750 transform hover:translate-y-1 cursor-pointer ${intento.colores[i]}`}>
-                {letra}
+      {loading ? (
+        <span className='flex justify-self-center font-press animate-bounce'>CARGANDO...</span>
+      ) :
+
+        <div className=' w-full flex flex-row relative items-center justify-center '>
+          <div className={`flex flex-col  w-1/2`}>
+            {intentos.map((intento, i) => (
+              <div key={i} className={`flex gap-2 justify-center mb-5 transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 translate-x-5"}`}>
+                {intento.palabra.split("").map((letra, i) => (
+                  <div key={i} className={`w-[60px] h-[60px] border-2 border-black-400 flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out delay-75 duration-750 transform hover:translate-y-1 cursor-pointer ${intento.colores[i]}`}>
+                    {letra}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        ))}
-      </div>
+          <aside className='bg-amber-200 w-1/6 top-0 right-40 border-2 flex absolute text-black flex-col items-center rounded-md'>
+            <span className="font-press block text-xl mb-2 w-auto ">Vidas:</span>
+            <div className={`flex gap-2 text-2xl `}>
+              {Array.from({ length: totalVidas }, (_, i) => (
+                <span key={i} className={i < vidasRestantes ? `text-red-500 text-5xl ${corazonesAnimacion()}` : 'text-gray-400 text-5xl  transition-all ease-in-out duration-200 delay-100 '}>
+                  ♥
+                </span>
 
-      <div className={`flex gap-2 justify-center mb-5 transition-all delay-150 duration-750 ease-in-out ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `}>
+
+              ))}
+
+
+            </div>
+          </aside>
+        </div>
+      }
+
+
+      <div className={`flex gap-2  justify-center mb-5 transition-all delay-150 duration-750 ease-in-out ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `}>
 
         {letras.map((letra, i) => (
           <div key={i} className={` w-[60px] h-[60px] border-2 border-red-400 flex items-center justify-center  text-2xl font-bold uppercase transition-all ease-in-out delay-150 duration-150 rounded-sm  `}>
@@ -198,14 +284,30 @@ export const App = () => {
         )
         )}
       </div>
-      {finJuego &&
 
-        <div className='flex fixed top- justify-self-center border-2 border-black p-2 rounded-md bg-blue-400 text-white animate-bounce cursor-pointer transition-all ease-in-out duration-300 hover:bg-blue-200 hover:text-black hover:translate-y-1 hover:animate-none'>
-          <button className='cursor-pointer' onClick={vacialLocalStorage}>Jugar de nuevo por $10 dolares</button>
+      <div className='flex justify-center mb-3 animate-girar '>
+
+        {mensajeFinal?.split("").map((l, i) =>
+          <div key={i} className={`w-[40px] h-[40px]  cursor-pointer delay-300  text-white ${mensajeFinal == "perdiste" ? "bg-orange-400 animate-wiggle hover:animate-none" : "bg-blue-400 animate-girar hover:animate-none"}  border-2 border-white flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out  duration-300  hover:translate-y-1  }`}>
+            {l}
+          </div>)}
+      </div>
+
+      {finJuego &&
+        <div className='flex relative  justify-self-center border-2 font-bold border-black p-2 rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none'>
+          <button className='cursor-pointer' onClick={vaciarLocalStorage}>Jugar de nuevo </button>
+        </div>
+      }
+      {vidasRestantes == 0 &&
+        <div className='flex justify-center bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center '>
+          <span>Te quedaste sin vidas</span> 
+          <p>Intentalo nuevamente mas tarde</p>
+          <span className='absolute top-[-2px] right-0 text-2xl bg-white rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2'>x</span>
         </div>
       }
 
-      <footer className='w-full sticky-b-0  absolute bottom-0 justify-center flex'>
+
+      <footer className='font-press font-extralight w-full sticky-b-0  absolute bottom-0 justify-center flex'>
         <div className='w-1/2 justify-evenly flex-row '>
           <h2 className='text-2xl justify-self-center'>Aclaraciones:</h2>
           <ul className='flex gap-[10px] justify-center'>

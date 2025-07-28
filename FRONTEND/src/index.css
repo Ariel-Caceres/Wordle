@@ -1,5 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
 @import "tailwindcss";
-#root{
-    height: 100vh;
-    position: relative;
+
+#root {
+  height: 100vh;
+  position: relative;
 }
+
+.font-press {
+  font-family: "Bungee", sans-serif;
+  /* font-weight: 900; */
+}
+
+@theme {
+  --animate-wiggle: wiggle 1s ease-in-out infinite;
+
+  @keyframes wiggle {
+
+    0%,
+    100% {
+      transform: rotate(-3deg);
+    }
+
+    50% {
+      transform: rotate(3deg);
+    }
+  }
+}
+
+@theme {
+  --animate-girar: girar 1s ease-in-out infinite;
+
+  @keyframes girar {
+
+    0%,
+    100% {
+      transform: translateY(1%)
+    }
+
+    50% {
+      transform: translateY(-10%)
+    }
+  }
+}
+

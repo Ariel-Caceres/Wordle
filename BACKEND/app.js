@@ -14,8 +14,7 @@ app.get("/word", async (req, res) => {
             where: { isCompleted: false },
             order: Sequelize.literal("RAND()")
         })
-    if (!palabra) return json.status(400).json("Error al encontrar la palabra")
-
+    if (!palabra) return json.status(400).json("Error al encontrar palabra")
     res.json(palabra)
 })
 
