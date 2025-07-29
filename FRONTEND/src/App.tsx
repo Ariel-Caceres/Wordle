@@ -103,6 +103,9 @@ export const App = () => {
     }
   }
 
+  const handleChangeDark = () => {
+    setModoOscuro(!modoOscuro)
+  }
   //FETCH DE LA PALABRA
   useEffect(() => {
     fetchData()
@@ -150,7 +153,7 @@ export const App = () => {
     const checkResults = (e: KeyboardEvent) => {
       if (e.key === "Enter" && letras.length == respuesta.length && !finJuego) {
         const nuevosColores: string[] = letras.map((l, i) => {
-          if (l === respuesta[i]) return `bg-green-400 animate-pulse  hover:-translate-y-20 dark:bg-green-800`
+          if (l === respuesta[i]) return `animate-pulse  hover:-translate-y-20 dark:bg-green-800 bg-green-400 `
           if (l !== respuesta[i] && respuesta.includes(l)) return "bg-yellow-400 dark:bg-yellow-600"
           return "bg-red-400 dark:bg-red-800"
         })
@@ -166,6 +169,8 @@ export const App = () => {
           localStorage.setItem("resuelto", "true")
           updateWord(respuesta)
           setFinJuego(true)
+          setVidasRestantes(vidasRestantes + 2)
+          localStorage.setItem("vidasRestantes", JSON.stringify(vidasRestantes));
           setCantLetras([])
           setMensajeFinal("ganaste")
         } else {
@@ -182,7 +187,7 @@ export const App = () => {
     return () => {
       window.removeEventListener("keydown", checkResults)
     }
-  }, [letras, respuesta, intentos, finJuego])
+  }, [letras, respuesta, intentos, finJuego, vidasRestantes])
 
 
   //Control de intentos y vidas en el LocalStorage
@@ -201,7 +206,7 @@ export const App = () => {
       localStorage.setItem("respuesta", JSON.stringify(intentos))
     }
 
-    if (intentos.length >= 5) {
+    if (intentos.length >= 5 || vidasRestantes == 0) {
       setCantLetras([]);
       setFinJuego(true)
     }
@@ -223,8 +228,8 @@ export const App = () => {
   useEffect(() => {
     const respuestaCorrectaLS = localStorage.getItem("respuestaCorrecta")
     const vidasRestantesLS = localStorage.getItem("vidasRestantes")
-    const respuestaStorage = localStorage.getItem("resuelto")
     const intentosLS = localStorage.getItem("respuesta")
+    const respuestaStorage = localStorage.getItem("resuelto")
     setLoading(true)
 
     if (respuestaStorage) {
@@ -250,16 +255,20 @@ export const App = () => {
   }, [])
 
 
-  //Escuchador del modo oscuro god
+  //Escuchador al lado oscuro god
   useEffect(() => {
     const matchDark = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
       setModoOscuro(e.matches);
     };
+    console.log(window.matchMedia('(prefers-color-scheme: light)'))
     setModoOscuro(matchDark.matches); // Set inicial
+
+
     matchDark.addEventListener('change', handleChange); // Detectar cambios
     return () => matchDark.removeEventListener('change', handleChange);
   }, []);
+
 
 
   // CONSOLE LOG PARA CONTROLAR 
@@ -277,7 +286,7 @@ export const App = () => {
 
     <main className={modoOscuro ? "bg-black text-white h-full " : "bg-white text-black h-full"}>
       <h1 className={` font-press justify-self-center text-3xl p-10 transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>Wordle </h1>
-
+      <button onClick={handleChangeDark}>Modo oscuro</button>
       {loading ? (
         <span className='flex justify-self-center font-press animate-bounce'>CARGANDO...</span>
       ) :
