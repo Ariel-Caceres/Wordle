@@ -8,13 +8,34 @@ interface Palabra {
 
 export const App = () => {
   const [letras, setLetras] = useState<string[]>([])
-  const [respuesta, setRespuesta] = useState<string>("")
-  const [cantLetras, setCantLetras] = useState<number[]>([])
-  const [intentos, setIntentos] = useState<Palabra[]>([])
-  const [finJuego, setFinJuego] = useState<boolean>(false)
+  const [respuesta, setRespuesta] = useState<string>(localStorage.getItem("respuestaCorrecta") || "")
+  const [cantLetras, setCantLetras] = useState<number[]>(() => {
+    const respuestaCorrectaLS = localStorage.getItem("respuestaCorrecta")
+    if (respuestaCorrectaLS) {
+      const arrayAux = []
+      for (let i = 0; i < respuestaCorrectaLS.length; i++) {
+        arrayAux.push(i + 1)
+      }
+      return arrayAux
+    }
+    return []
+  })
+  const [intentos, setIntentos] = useState<Palabra[]>(() => {
+    const intentosLS = localStorage.getItem("respuestas")
+    if (intentosLS) {
+      return JSON.parse(intentosLS)
+    }
+    return []
+
+  })
+  const [finJuego, setFinJuego] = useState<boolean>(() => {
+    const resueltoLS = localStorage.getItem("resuelto");
+    const vidasLS = Number(localStorage.getItem("vidasRestantes"));
+    return resueltoLS === "true" || vidasLS === 0;
+  });
   const [animar, setAnimar] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
-  const [mensajeFinal, setMensajeFinal] = useState<string>()
+  const [mensajeFinal, setMensajeFinal] = useState<string>("")
   const totalVidas = 5
   const [vidasRestantes, setVidasRestantes] = useState<number>(() => {
     const vidasLS = localStorage.getItem("vidasRestantes");
@@ -22,7 +43,6 @@ export const App = () => {
   });
   const [modoOscuro, setModoOscuro] = useState(false);
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
-
 
   const updateWord = async (respuesta: string) => {
     setLoading(true)
@@ -54,18 +74,26 @@ export const App = () => {
   }
 
   const vaciarLocalStorage = () => {
-    if (vidasRestantes != 0 && finJuego) {
-      localStorage.removeItem("resuelto")
-      localStorage.removeItem("respuesta")
-      localStorage.removeItem("respuestaCorrecta")
-      setIntentos([])
-      setMensajeFinal("")
-      setFinJuego(false)
-      fetchData()
-    } else {
-      console.log("te quedaste sin vidas")
+    if (vidasRestantes != 0) {
+
+      localStorage.removeItem("respuestas");
+      localStorage.removeItem("respuestaCorrecta");
+      localStorage.removeItem("resuelto");
+      localStorage.setItem("vidasRestantes", JSON.stringify(vidasRestantes));
+
+      setRespuesta("");
+      setIntentos([]);
+      setFinJuego(false);
+      setMensajeFinal("");
+
+      setLetras([]);
+      setCantLetras([]);
+      setCartelVidas(false);
+
     }
-  }
+    // fetchData();
+  };
+
 
   const quitarAcentos = (letra: string) => {
     return letra.replace(/[áÁ]/g, 'A')
@@ -81,35 +109,34 @@ export const App = () => {
     }
   }
 
-  const fetchData = async () => {
-    const resuelto = localStorage.getItem("resuelto")
-    const intentosLS = localStorage.getItem("respuesta")
-    if (!resuelto && !intentosLS && vidasRestantes !== 0) {
-      setLoading(true)
-      try {
-        const res = await fetch("http://localhost:3000/word")
-        const data = await res.json()
-        if (!res.ok) {
-          throw new Error("Error al traer productos"), await data.message;
-        }
-        setRespuesta(quitarAcentos(data.name.toUpperCase()))
-        localStorage.setItem("respuestaCorrecta", quitarAcentos(data.name.toUpperCase()))
-        forCantLetras(data.name)
-        setLoading(false)
-      } catch (error) {
-        console.log("Error al traer palabra", error)
 
-      }
-    }
-  }
 
   const handleChangeDark = () => {
     setModoOscuro(!modoOscuro)
   }
   //FETCH DE LA PALABRA
   useEffect(() => {
+    const fetchData = async () => {
+      if (!finJuego && vidasRestantes !== 0 && respuesta === "") {
+        setLoading(true)
+        try {
+          const res = await fetch("http://localhost:3000/word")
+          const data = await res.json()
+          if (!res.ok) {
+            throw new Error("Error al traer productos"), await data.message;
+          }
+          setRespuesta(quitarAcentos(data.name.toUpperCase()))
+          localStorage.setItem("respuestaCorrecta", quitarAcentos(data.name.toUpperCase()))
+          forCantLetras(data.name)
+          setLoading(false)
+        } catch (error) {
+          console.log("Error al traer palabra", error)
+
+        }
+      }
+    }
     fetchData()
-  }, [])
+  }, [finJuego, vidasRestantes, respuesta])
 
 
   //Ingreso Letras
@@ -169,11 +196,18 @@ export const App = () => {
           localStorage.setItem("resuelto", "true")
           updateWord(respuesta)
           setFinJuego(true)
-          setVidasRestantes(vidasRestantes + 2)
+          setVidasRestantes(
+            vidasRestantes < 4
+              ? vidasRestantes + 2
+              : vidasRestantes === 4
+                ? vidasRestantes + 1
+                : vidasRestantes
+          );
           localStorage.setItem("vidasRestantes", JSON.stringify(vidasRestantes));
           setCantLetras([])
           setMensajeFinal("ganaste")
         } else {
+          localStorage.setItem("resuelto", "false")
           const vidasDiferencia = vidasRestantes - 1;
           setVidasRestantes(vidasDiferencia);
           localStorage.setItem("vidasRestantes", JSON.stringify(vidasDiferencia));
@@ -192,67 +226,46 @@ export const App = () => {
 
   //Control de intentos y vidas en el LocalStorage
   useEffect(() => {
-    const resuelto = localStorage.getItem("resuelto")
-
-    const vidasDiferencia = vidasRestantes
-    localStorage.setItem("vidasRestantes", JSON.stringify(vidasDiferencia))
-    const vidasRestantesLS = localStorage.getItem("vidasRestantes")
-
-    if (vidasRestantesLS && vidasRestantes == undefined) {
-      setVidasRestantes(Number(vidasRestantesLS))
+    if (intentos.length > 0) {
+      localStorage.setItem("respuestas", JSON.stringify(intentos));
     }
+    const resueltoLS = localStorage.getItem("resuelto");
 
-    if (intentos.length != 0) {
-      localStorage.setItem("respuesta", JSON.stringify(intentos))
-    }
 
-    if (intentos.length >= 5 || vidasRestantes == 0) {
+    if (vidasRestantes === 0) {
+      setFinJuego(true);
+      localStorage.setItem("resuelto", "false");
+      setMensajeFinal("perdiste");
       setCantLetras([]);
-      setFinJuego(true)
     }
 
-    if (finJuego && !resuelto) {
-      setMensajeFinal("perdiste")
+    if (finJuego) {
+      if (resueltoLS === "false") {
+        setMensajeFinal("perdiste");
+        setCantLetras([]);
+      }
     }
 
-    if (resuelto && finJuego) {
-      setCantLetras([]);
-      setMensajeFinal("ganaste")
-      setFinJuego(true)
+    if (finJuego) {
+      if (resueltoLS === "true") {
+        setMensajeFinal("ganaste");
+        setCantLetras([]);
+      }
     }
 
-  }, [intentos, finJuego, vidasRestantes]);
+  }, [intentos, vidasRestantes, finJuego]);
 
 
   //Traer datos del localStorage
   useEffect(() => {
-    const respuestaCorrectaLS = localStorage.getItem("respuestaCorrecta")
-    const vidasRestantesLS = localStorage.getItem("vidasRestantes")
-    const intentosLS = localStorage.getItem("respuesta")
-    const respuestaStorage = localStorage.getItem("resuelto")
-    setLoading(true)
-
-    if (respuestaStorage) {
-      setCantLetras([])
-      setFinJuego(true)
-      setMensajeFinal("ganaste")
-    }
-
-    if (intentosLS && respuestaCorrectaLS) {
-      setIntentos(JSON.parse(intentosLS))
-      setRespuesta(respuestaCorrectaLS)
-      forCantLetras(respuestaCorrectaLS)
+    if (respuesta) {
       setLoading(false)
-    }
-
-    if (vidasRestantes == undefined && !vidasRestantesLS) {
-      setVidasRestantes(totalVidas)
     }
     const timer = setTimeout(() => {
       setAnimar(true)
     }, 10)
     return () => clearTimeout(timer)
-  }, [])
+  }, [respuesta])
 
 
   //Escuchador al lado oscuro god
@@ -261,7 +274,6 @@ export const App = () => {
     const handleChange = (e: MediaQueryListEvent) => {
       setModoOscuro(e.matches);
     };
-    console.log(window.matchMedia('(prefers-color-scheme: light)'))
     setModoOscuro(matchDark.matches); // Set inicial
 
 
@@ -271,16 +283,7 @@ export const App = () => {
 
 
 
-  // CONSOLE LOG PARA CONTROLAR 
-  // useEffect(() => {
-  //   if (vidasRestantes) {
-
-  //     console.log(vidasRestantes)
-  //   }
-
-  // }, [vidasRestantes])
-
-
+  // if (loading) return null
 
   return (
 
@@ -288,7 +291,12 @@ export const App = () => {
       <h1 className={` font-press justify-self-center text-3xl p-10 transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>Wordle </h1>
       <button onClick={handleChangeDark}>Modo oscuro</button>
       {loading ? (
-        <span className='flex justify-self-center font-press animate-bounce'>CARGANDO...</span>
+        <div className='flex flex-row justify-center w-full items-center'>
+          <span className='flex justify-self-center font-press animate-bounce'>CARGANDO...</span>
+          <div className='animate-bounce'>
+            <span className='flex  font-press animate-spin'>🕓</span>
+          </div>
+        </div>
       ) :
 
         <div className=' w-full flex flex-row relative items-center justify-center '>
@@ -338,10 +346,10 @@ export const App = () => {
 
       <div className='flex justify-center mb-3 animate-girar '>
 
-        {mensajeFinal?.split("").map((l, i) =>
+        {finJuego ? mensajeFinal?.split("").map((l, i) =>
           <div key={i} className={`w-[40px] h-[40px]   cursor-pointer delay-300  text-white ${mensajeFinal == "perdiste" ? "bg-orange-400 animate-wiggle hover:animate-none dark:bg-orange-800" : "bg-blue-400 animate-girar hover:animate-none"}  border-2 dark:border-gray-800 border-white flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out  duration-300  hover:translate-y-1  }`}>
             {l}
-          </div>)}
+          </div>) : ""}
       </div>
 
       {finJuego &&
