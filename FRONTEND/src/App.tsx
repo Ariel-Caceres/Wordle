@@ -112,14 +112,13 @@ export const App = () => {
   }
 
   const handleChangeDark = () => {
-    const newModoOscuro = !modoOscuro
-    setModoOscuro(newModoOscuro)
-
-    if (newModoOscuro) {
-      document.documentElement.classList.add('dark')
+    setModoOscuro(!modoOscuro)
+    if (!modoOscuro) {
+      localStorage.setItem("modoOscuro", "true")
     } else {
-      document.documentElement.classList.remove('dark')
+      localStorage.setItem("modoOscuro", "false")
     }
+
   }
 
 
@@ -306,8 +305,13 @@ export const App = () => {
   }, [intentos, vidasRestantes])
 
 
-
-  console.log(modoOscuro)
+  useEffect(() => {
+    const temaGuardado = localStorage.getItem("modoOscuro")
+    if (temaGuardado) {
+      const dark = temaGuardado === "true"
+      setModoOscuro(dark)
+    }
+  }, [])
 
 
 
@@ -403,40 +407,41 @@ export const App = () => {
                     {l}
                   </div>) : ""}
               </div>
+
+              {finJuego &&
+                <div className='flex relative dark:shadow-white dark:shadow-xl/20 justify-self-center border-2 font-bold border-black p-2 rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none'>
+                  <button className='cursor-pointer' onClick={() => [vaciarLocalStorage(), setCartelVidas(vidasRestantes == 0 ? true : false)]}>Jugar de nuevo </button>
+                </div>
+              }
+              {cartelVidas &&
+                <div className='flex gap-1 justify-center  dark:text-black text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center '>
+                  <span>Te quedaste sin vidas</span>
+                  <p>Inténtalo nuevamente mas tarde</p>
+                  <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
+                </div>
+              }
+
+              <footer className='font-press font-extralight w-full sticky-b-0 absolute bottom-0 justify-center flex'>
+                <div className='w-1/2 justify-evenly flex-row '>
+                  <ul className='flex gap-[10px] justify-center'>
+                    <li>
+                      <span>Correcto</span>
+                      <span >🟩</span>
+                    </li>
+                    <li>
+                      <span>Parcialmente Correcto</span>
+                      <span>🟨</span>
+                    </li>
+                    <li>
+                      <span>Incorrecto</span>
+                      <span>🟥</span>
+                    </li>
+                  </ul>
+                </div>
+              </footer>
             </>
 
           }
-          {finJuego &&
-            <div className='flex relative dark:shadow-white dark:shadow-xl/20 justify-self-center border-2 font-bold border-black p-2 rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none'>
-              <button className='cursor-pointer' onClick={() => [vaciarLocalStorage(), setCartelVidas(vidasRestantes == 0 ? true : false)]}>Jugar de nuevo </button>
-            </div>
-          }
-          {cartelVidas &&
-            <div className='flex gap-1 justify-center  dark:text-black text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center '>
-              <span>Te quedaste sin vidas</span>
-              <p>Inténtalo nuevamente mas tarde</p>
-              <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
-            </div>
-          }
-
-          <footer className='font-press font-extralight w-full sticky-b-0 absolute bottom-0 justify-center flex'>
-            <div className='w-1/2 justify-evenly flex-row '>
-              <ul className='flex gap-[10px] justify-center'>
-                <li>
-                  <span>Correcto</span>
-                  <span >🟩</span>
-                </li>
-                <li>
-                  <span>Parcialmente Correcto</span>
-                  <span>🟨</span>
-                </li>
-                <li>
-                  <span>Incorrecto</span>
-                  <span>🟥</span>
-                </li>
-              </ul>
-            </div>
-          </footer>
         </main>
       }
 
