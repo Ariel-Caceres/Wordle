@@ -18,8 +18,6 @@ app.get("/word", async (req, res) => {
     res.json(palabra)
 })
 
-
-
 app.put("/done", async (req, res) => {
     let palabraAEditar = req.body.palabra
     const palabraEncontrada = await db.word.findOne({ where: { name: palabraAEditar } })
