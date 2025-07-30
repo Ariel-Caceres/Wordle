@@ -112,14 +112,18 @@ export const App = () => {
   }
 
   const handleChangeDark = () => {
-    setModoOscuro(!modoOscuro)
-    if (!modoOscuro) {
+    const nuevoModo = !modoOscuro
+    setModoOscuro(nuevoModo)
+
+    if (nuevoModo) {
       localStorage.setItem("modoOscuro", "true")
+      document.documentElement.classList.add("dark")
     } else {
       localStorage.setItem("modoOscuro", "false")
+      document.documentElement.classList.remove("dark")
     }
-
   }
+
 
 
   //FETCH DE LA PALABRA
@@ -197,9 +201,10 @@ export const App = () => {
     const checkResults = (e: KeyboardEvent) => {
       if (e.key === "Enter" && letras.length == respuesta.length && !finJuego) {
         const nuevosColores: string[] = letras.map((l, i) => {
-          if (l === respuesta[i]) return `animate-pulse  hover:-translate-y-20 dark:bg-green-800 bg-green-400 `
-          if (l !== respuesta[i] && respuesta.includes(l)) return "bg-yellow-400 dark:bg-yellow-600"
-          return "bg-red-400 dark:bg-red-800"
+          // if (l === respuesta[i]) return `animate-pulse dark:bg-green-800 bg-green-400 `
+          if (l === respuesta[i]) return `bg-green-400`
+          if (l !== respuesta[i] && respuesta.includes(l)) return "bg-yellow-400"
+          return "bg-red-400"
         })
 
         setIntentos(prev => [
@@ -286,10 +291,14 @@ export const App = () => {
   // useEffect(() => {
   //   const matchDark = window.matchMedia('(prefers-color-scheme: dark)');
   //   const handleChange = (e: MediaQueryListEvent) => {
-  //     setModoOscuro(e.matches);
+  //     // setModoOscuro(e.matches);
+  //     localStorage.setItem("modoOscuro", `${e.matches}`)
+  //     const oscuro = localStorage.getItem("modoOscuro")
+  //     const oscuro2 = oscuro === "true"
+  //     if (oscuro2) {
+  //       setModoOscuro(oscuro2);
+  //     }
   //   };
-  //   setModoOscuro(matchDark.matches); // Set inicial
-
 
   //   matchDark.addEventListener('change', handleChange); // Detectar cambios
   //   return () => matchDark.removeEventListener('change', handleChange);
@@ -310,8 +319,10 @@ export const App = () => {
     if (temaGuardado) {
       const dark = temaGuardado === "true"
       setModoOscuro(dark)
+      document.documentElement.classList.add("dark")
     }
-  }, [])
+    console.log(modoOscuro)
+  }, [modoOscuro])
 
 
 
@@ -362,18 +373,27 @@ export const App = () => {
             :
             <>
               <div className=' w-full flex flex-row relative items-center justify-center  '>
-                <div className={`flex flex-col  w-1/2`}>
+                <div className={`flex flex-col w-1/2`}>
                   {intentos.map((intento, i) => (
                     <div key={i} className={`flex gap-2 justify-center mb-5 transition-all ease-in-out delay-75 duration-750 transform  ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 translate-x-5"}`}>
                       {intento.palabra.split("").map((letra, i) => (
-                        <div key={i} className={`w-[60px] h-[60px] border-2 border-black-400 flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out delay-75 duration-750 transform hover:translate-y-1 cursor-pointer ${modoOscuro ? "border-white" : "border-black"} ${intento.colores[i]}`}>
+                        <div key={i} className={`w-[60px] h-[60px] border-2 border-black-400 flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out delay-75 duration-750 transform hover:translate-y-1 cursor-pointer 
+                          ${modoOscuro
+                            ? intento.colores[i] === "bg-green-400"
+                              ? "bg-green-800"
+                              : intento.colores[i] === "bg-yellow-400"
+                                ? "bg-yellow-600"
+                                : intento.colores[i] === "bg-red-400"
+                                  ? "bg-red-800"
+                                  : intento.colores[i]
+                            : intento.colores[i]}`}>
                           {letra}
                         </div>
                       ))}
                     </div>
                   ))}
                 </div>
-                <aside className={`hover:bg-amber-200 bg-white z-10  w-1/6 top-0 right-1/8 flex-wrap felx border-2 flex absolute text-black cursor-pointer flex-col items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900  ${animar ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
+                <aside className={`hover:bg-amber-200 bg-white z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900  ${animar ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
                   <span className="font-press flex text-xl mb-2 w-auto  flex-wrap ">Vidas:</span>
                   <div className={`flex gap-2 text-2xl  flex-wrap  `}>
                     {Array.from({ length: totalVidas }, (_, i) => (
