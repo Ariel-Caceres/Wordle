@@ -1,9 +1,12 @@
 import { useDarkMode } from "../context/useDarkMode.tsx"
+import { useStats } from "../context/useStats"
 
 export interface Mostrar {
     onClose: () => void
 }
+
 export const Intro = ({ onClose }: Mostrar) => {
+    const { intentos } = useStats()
     const { modoOscuro } = useDarkMode();
     return (
         <>
@@ -35,7 +38,11 @@ export const Intro = ({ onClose }: Mostrar) => {
                         <p>La letra no esta en la palabra</p>
                     </div>
                 </div>
-                <button className={`justify-self-center border-2 p-2 mb-2 rounded-md bg-blue-400 text-white text-2xl cursor-pointer `} onClick={onClose}>JUGAR</button>
+                {intentos != 0 ?
+                    ""
+                    :
+                    <button className={`justify-self-center border-2 p-2 mb-2 rounded-md bg-blue-500 text-white text-2xl cursor-pointer ${intentos > 0 ? "flex-none" : ""} `} onClick={onClose}>JUGAR</button>
+                }
             </div>
         </>
     )
