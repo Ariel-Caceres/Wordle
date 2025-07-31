@@ -1,4 +1,9 @@
+import { useStats } from "../context/useStats"
+const { intentos, resueltos, vidasGanadas, palabrasResueltas } = useStats()
+
 export const Stats = () => {
+
+
     return (
         <div className={`absolute font-press gap-5 h-1/2 flex flex-col border-2  rounded-md ${modoOscuro ? "border-white" : "border-black"} -translate-y-50% w-1/3 z-20  items-center  bg-amber-300 text-black justify-self-center `}>
             <span className='font-press absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setStats(false)}>x</span>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useStats } from "../context/useStats"
+import { useDarkMode } from "../context/useDarkMode.tsx"
 import './App.css'
 interface Palabra {
   palabra: string,
@@ -37,12 +38,11 @@ export const App = () => {
     const vidasLS = localStorage.getItem("vidasRestantes");
     return vidasLS !== null ? Number(vidasLS) : totalVidas;
   });
-  const [modoOscuro, setModoOscuro] = useState(false);
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
   const [intro, setIntro] = useState<boolean>(true)
   const [stats, setStats] = useState<boolean>(false)
-
   const { sumarIntentos, sumarResueltos, sumarVidasGanadas, agregarPalabrasResueltas } = useStats()
+  const { modoOscuro, toggleModoOscuro } = useDarkMode();
 
   const updateWord = async (respuesta: string) => {
     setLoading(true)
@@ -108,16 +108,7 @@ export const App = () => {
   }
 
   const handleChangeDark = () => {
-    const nuevoModo = !modoOscuro
-    setModoOscuro(nuevoModo)
-
-    if (nuevoModo) {
-      localStorage.setItem("modoOscuro", "true")
-      document.documentElement.classList.add("dark")
-    } else {
-      localStorage.setItem("modoOscuro", "false")
-      document.documentElement.classList.remove("dark")
-    }
+    toggleModoOscuro()
   }
 
 
@@ -294,17 +285,6 @@ export const App = () => {
     }
 
   }, [intentos, vidasRestantes])
-
-
-  useEffect(() => {
-    const temaGuardado = localStorage.getItem("modoOscuro")
-    if (temaGuardado) {
-      const dark = temaGuardado === "true"
-      setModoOscuro(dark)
-      document.documentElement.classList.add("dark")
-    }
-    console.log(modoOscuro)
-  }, [modoOscuro])
 
 
 
