@@ -15,11 +15,10 @@ export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
         return modoOscuroLS ? JSON.parse(modoOscuroLS) : false
     })
 
-
-
     useEffect(() => {
         localStorage.setItem("modoOscuro", JSON.stringify(modoOscuro));
-    })
+    }, [modoOscuro])
+
     const toggleModoOscuro = () => setModoOscuro((prev) => !prev);
 
     return (

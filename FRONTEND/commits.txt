@@ -1,0 +1,39 @@
+feat: Se usa cuando agregás una nueva funcionalidad.
+
+Ejemplo: feat: agregar componente de login
+
+fix: Para corregir bugs.
+
+Ejemplo: fix: corregir error de validación en formulario
+
+docs: Cambios en la documentación (README, comentarios, etc).
+
+Ejemplo: docs: actualizar instrucciones de instalación
+
+style: Cambios que no afectan el comportamiento (espaciado, formateo, etc).
+
+Ejemplo: style: aplicar prettier a todos los archivos
+
+refactor: Reestructuración de código sin cambiar su funcionalidad.
+
+Ejemplo: refactor: extraer lógica repetida en función reutilizable
+
+test: Agregar o modificar tests.
+
+Ejemplo: test: agregar tests para componente Header
+
+chore: Tareas varias como cambios en el build, configuración, dependencias, etc.
+
+Ejemplo: chore: actualizar dependencias del proyecto
+
+perf: Mejoras de rendimiento.
+
+Ejemplo: perf: optimizar renderizado de lista
+
+build: Cambios que afectan el sistema de construcción o dependencias externas.
+
+Ejemplo: build: cambiar configuración de webpack
+
+ci: Cambios en configuraciones de integración continua (GitHub Actions, etc).
+
+Ejemplo: ci: agregar workflow de despliegue

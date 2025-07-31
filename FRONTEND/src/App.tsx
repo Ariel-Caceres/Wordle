@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStats } from "../context/useStats"
 import { useDarkMode } from "../context/useDarkMode.tsx"
+import { Stats } from "../componentes/Stats.tsx"
 import './App.css'
 interface Palabra {
   palabra: string,
@@ -40,8 +41,9 @@ export const App = () => {
   });
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
   const [intro, setIntro] = useState<boolean>(true)
-  const [stats, setStats] = useState<boolean>(false)
-  const { sumarIntentos, sumarResueltos, sumarVidasGanadas, agregarPalabrasResueltas } = useStats()
+
+
+  const { sumarIntentos, sumarResueltos, sumarVidasGanadas, agregarPalabrasResueltas, toggleMostrarStats } = useStats()
   const { modoOscuro, toggleModoOscuro } = useDarkMode();
 
   const updateWord = async (respuesta: string) => {
@@ -206,6 +208,7 @@ export const App = () => {
           agregarPalabrasResueltas(respuesta)
           updateWord(respuesta)
           setFinJuego(true)
+          sumarIntentos(1)
           setVidasRestantes(
             vidasRestantes < 4
               ? vidasRestantes + 2
@@ -214,10 +217,14 @@ export const App = () => {
                 : vidasRestantes
           );
           sumarVidasGanadas(2)
+          sumarIntentos(1)
+
           localStorage.setItem("vidasRestantes", JSON.stringify(vidasRestantes));
           setCantLetras([])
           setMensajeFinal("ganaste")
         } else {
+          sumarIntentos(1)
+
           localStorage.setItem("resuelto", "false")
           const vidasDiferencia = vidasRestantes - 1;
           setVidasRestantes(vidasDiferencia);
@@ -239,7 +246,6 @@ export const App = () => {
   useEffect(() => {
     if (intentos.length > 0) {
       localStorage.setItem("respuestas", JSON.stringify(intentos));
-      sumarIntentos(1)
       setIntro(false)
     }
     const resueltoLS = localStorage.getItem("resuelto");
@@ -300,7 +306,7 @@ export const App = () => {
       ) :
         <>
           <header className={`flex justify-center items-center font-press `}>
-            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl transition-all ease-in-out delay-75 duration-150 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `} onClick={() => setStats(!stats)}>
+            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl transition-all ease-in-out delay-75 duration-150 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `} onClick={() => toggleMostrarStats()}>
               <i className="fa-solid fa-chart-simple"></i>
             </div>
             <div>
@@ -310,32 +316,7 @@ export const App = () => {
               <i className="fa-solid fa-question" ></i>
             </div>
           </header>
-          {stats &&
-            <div className={`absolute font-press gap-5 h-1/2 flex flex-col border-2  rounded-md ${modoOscuro ? "border-white" : "border-black"} -translate-y-50% w-1/3 z-20  items-center  bg-amber-300 text-black justify-self-center `}>
-              <span className='font-press absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setStats(false)}>x</span>
-              <span className='text-2xl pt-2'>Tus stats</span >
-              <div className='w-[90%] border-2 p-1 rounded-md hover:shadow-red-400 shadow-md'>
-                <h3 className='p-1'>Jugados:</h3>
-
-              </div>
-              <div className='w-[90%] border-2 p-1 rounded-md hover:shadow-green-200 shadow-md'>
-                <h3 className='p-1'>Rachas:</h3>
-
-              </div>
-              <div className='w-[90%] flex flex-col gap-2 p-1 rounded-md border-2'>
-                <h3 className='p-1'>Intentos:</h3>
-                <div className='flex gap-2 items-center w-full'>
-
-                </div>
-                <div className='flex gap-2 items-center'>
-
-                </div>
-                <div className='flex gap-2 items-center pb-1'>
-
-                </div>
-              </div>
-            </div>
-          }
+          <Stats />
           <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
             <button onClick={handleChangeDark} className="w-8 absolute cursor-pointer pl-5 pr-5 pt-2 pb-2 left-60 transition-all ease-in-out duration-750 transform  z-10 border-2 rounded-md items-center justify-center flex "><i className={modoOscuro ? "fa-solid fa-toggle-off text-2xl" : "fa-solid fa-toggle-on w-full text-2xl"}></i></button>
             {intro ?
@@ -472,7 +453,7 @@ export const App = () => {
 
         </>
       }
-    </div>
+    </div >
 
   )
 
