@@ -5,21 +5,17 @@ interface StatsContextType {
     resueltos: number,
     vidasGanadas: number,
     palabrasResueltas: string[],
-    mostrarStats: boolean,
 
     sumarIntentos: (numero: number) => void;
     sumarResueltos: (numero: number) => void;
     sumarVidasGanadas: (numero: number) => void;
     agregarPalabrasResueltas: (palabra: string) => void;
 
-    setMostrarStats: (valor: boolean) => void,
-    toggleMostrarStats: () => void
 }
 
 export const StatsContext = createContext<StatsContextType | undefined>(undefined);
 
 export const StatsProvider = ({ children }: { children: ReactNode }) => {
-    const [mostrarStats, setMostrarStats] = useState<boolean>(false)
     const [stats, setStats] = useState<{
         intentos: number;
         resueltos: number;
@@ -46,7 +42,7 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
     }
     const sumarVidasGanadas = (numero: number) => {
         setStats(prev => ({
-            ...prev, VidasGanadas: prev.vidasGanadas + numero
+            ...prev, vidasGanadas: prev.vidasGanadas + numero
         }))
     }
     const agregarPalabrasResueltas = (palabra: string) => {
@@ -60,7 +56,6 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
     }, [stats])
 
 
-    const toggleMostrarStats = () => setMostrarStats((prev) => !prev);
 
     return (
         <StatsContext.Provider value={{
@@ -73,9 +68,7 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
             resueltos: stats.resueltos,
             vidasGanadas: stats.vidasGanadas,
             palabrasResueltas: stats.palabrasResueltas,
-            mostrarStats,
-            toggleMostrarStats,
-            setMostrarStats
+
         }}>
             {children}
         </StatsContext.Provider>

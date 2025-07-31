@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { useStats } from "../context/useStats"
 import { useDarkMode } from "../context/useDarkMode.tsx"
 import { Stats } from "../componentes/Stats.tsx"
+import { Intro } from "../componentes/Intro.tsx"
 import './App.css'
 interface Palabra {
   palabra: string,
   colores: string[]
 }
-
 export const App = () => {
   const [letras, setLetras] = useState<string[]>([])
   const [respuesta, setRespuesta] = useState<string>("")
@@ -41,9 +41,10 @@ export const App = () => {
   });
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
   const [intro, setIntro] = useState<boolean>(true)
+  const [mostrarStats, setMostrarStats] = useState<boolean>(false)
 
 
-  const { sumarIntentos, sumarResueltos, sumarVidasGanadas, agregarPalabrasResueltas, toggleMostrarStats } = useStats()
+  const { sumarIntentos, sumarResueltos, sumarVidasGanadas, agregarPalabrasResueltas } = useStats()
   const { modoOscuro, toggleModoOscuro } = useDarkMode();
 
   const updateWord = async (respuesta: string) => {
@@ -217,7 +218,6 @@ export const App = () => {
                 : vidasRestantes
           );
           sumarVidasGanadas(2)
-          sumarIntentos(1)
 
           localStorage.setItem("vidasRestantes", JSON.stringify(vidasRestantes));
           setCantLetras([])
@@ -305,8 +305,9 @@ export const App = () => {
         </div>
       ) :
         <>
+
           <header className={`flex justify-center items-center font-press `}>
-            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl transition-all ease-in-out delay-75 duration-150 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `} onClick={() => toggleMostrarStats()}>
+            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl transition-all ease-in-out delay-75 duration-150 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `} onClick={() => setMostrarStats(!mostrarStats)}>
               <i className="fa-solid fa-chart-simple"></i>
             </div>
             <div>
@@ -316,140 +317,108 @@ export const App = () => {
               <i className="fa-solid fa-question" ></i>
             </div>
           </header>
-          <Stats />
-          <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
-            <button onClick={handleChangeDark} className="w-8 absolute cursor-pointer pl-5 pr-5 pt-2 pb-2 left-60 transition-all ease-in-out duration-750 transform  z-10 border-2 rounded-md items-center justify-center flex "><i className={modoOscuro ? "fa-solid fa-toggle-off text-2xl" : "fa-solid fa-toggle-on w-full text-2xl"}></i></button>
-            {intro ?
-              <div className={`absolute font-press gap-5 h-4/7 flex flex-col border-2  rounded-md ${modoOscuro ? "border-white" : "border-black"} -translate-y-50% w-1/3 z-20  items-center  bg-amber-300 text-black justify-self-center `}>
-                <span className='font-press absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setIntro(false)}>x</span>
-                <span className='text-2xl pt-2'>Reglas del juego</span >
-                <div className='w-[90%] border-2 p-1 rounded-md hover:shadow-red-400 shadow-md'>
-                  <h3 className='p-1'>Al equivocarte:</h3>
-                  <p>Al equivocarte vas a perder una vida  ➖💔</p>
-                  <p>El juego terminara al quedarte sin vidas</p>
-                </div>
-                <div className='w-[90%] border-2 p-1 rounded-md hover:shadow-green-200 shadow-md'>
-                  <h3 className='p-1'>Al acertar:</h3>
-                  <p>Al acertar vas a ganar dos vidas ➕ <span className='text-red-600 text-2xl'>♥♥</span> </p>
-                  <p>Vas a poder seguir jugando mientras tengas vidas</p>
-                </div>
-                <div className='w-[90%] flex flex-col gap-2 p-1 rounded-md border-2'>
-                  <h3 className='p-1'>Guía de colores:</h3>
-                  <div className='flex gap-2 items-center w-full'>
-                    <div className='w-[30px] h-[30px] bg-green-400 justify-center flex items-center border-2 text-xl item-center'>A</div>
-                    <p>La letra esta en la palabra y en el orden correcto</p>
-                  </div>
-                  <div className='flex gap-2 items-center'>
-                    <div className='w-[30px] h-[30px] bg-yellow-400 justify-center flex items-center border-2 text-xl'>A</div>
-                    <p>La letra esta en la palabra y en el orden incorrecto</p>
-                  </div>
-                  <div className='flex gap-2 items-center pb-1'>
-                    <div className='w-[30px] h-[30px] bg-red-400 justify-center flex items-center border-2 text-xl'>A</div>
-                    <p>La letra no esta en la palabra</p>
-                  </div>
-                </div>
-                <button className={`justify-self-center border-2 p-2 rounded-md bg-blue-400 text-white text-2xl cursor-pointer `} onClick={() => setIntro(false)}>JUGAR</button>
-              </div>
-              :
+          {mostrarStats && <Stats onClose={() => setMostrarStats(false)} />}
+          {!mostrarStats && intro && <Intro onClose={() => setIntro(false)} />}
+          {!mostrarStats && !intro &&
+            <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
+              <button onClick={handleChangeDark} className="w-8 absolute cursor-pointer pl-5 pr-5 pt-2 pb-2 left-60 transition-all ease-in-out duration-750 transform  z-10 border-2 rounded-md items-center justify-center flex "><i className={modoOscuro ? "fa-solid fa-toggle-off text-2xl" : "fa-solid fa-toggle-on w-full text-2xl"}></i></button>
 
-              <>
-                <div className=' w-full flex flex-row relative items-center justify-center'>
-                  <div className={`flex flex-col w-1/2`}>
-                    {intentos.map((intento, i) => (
-                      <div key={i} className={`flex gap-2 justify-center mb-5 transition-all ease-in-out delay-75 duration-750 transform  ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 translate-x-5"}`}>
-                        {intento.palabra.split("").map((letra, i) => (
-                          <div key={i} className={`w-[60px] h-[60px] border-2 border-black-400 flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out delay-75 duration-750 transform hover:translate-y-1 cursor-pointer 
+              <div className=' w-full flex flex-row relative items-center justify-center'>
+                <div className={`flex flex-col w-1/2`}>
+                  {intentos.map((intento, i) => (
+                    <div key={i} className={`flex gap-2 justify-center mb-5 transition-all ease-in-out delay-75 duration-750 transform  ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 translate-x-5"}`}>
+                      {intento.palabra.split("").map((letra, i) => (
+                        <div key={i} className={`w-[60px] h-[60px] border-2 border-black-400 flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out delay-75 duration-750 transform hover:translate-y-1 cursor-pointer 
                           ${modoOscuro
-                              ? intento.colores[i] === "bg-green-400"
-                                ? "bg-green-800 animate-pulse"
-                                : intento.colores[i] === "bg-yellow-400"
-                                  ? "bg-yellow-600"
-                                  : intento.colores[i] === "bg-red-400"
-                                    ? "bg-red-800"
-                                    : intento.colores[i]
-                              : intento.colores[i]}`}>
-                            {letra}
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                  <aside className={`hover:bg-amber-200 bg-white z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900  ${animar ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
-                    <span className="font-press flex text-xl mb-2 w-auto  flex-wrap ">Vidas:</span>
-                    <div className={`flex gap-2 text-2xl  flex-wrap  `}>
-                      {Array.from({ length: totalVidas }, (_, i) => (
-                        <span key={i} className={i < vidasRestantes ? `text-red-500 text-5xl ${corazonesAnimacion()}` : 'text-gray-400 text-5xl'}>
-                          ♥
-                        </span>
+                            ? intento.colores[i] === "bg-green-400"
+                              ? "bg-green-800 animate-pulse"
+                              : intento.colores[i] === "bg-yellow-400"
+                                ? "bg-yellow-600"
+                                : intento.colores[i] === "bg-red-400"
+                                  ? "bg-red-800"
+                                  : intento.colores[i]
+                            : intento.colores[i]}`}>
+                          {letra}
+                        </div>
                       ))}
                     </div>
-                  </aside>
-                </div>
-
-                <div className={`flex gap-2   justify-center mb-5 transition-all delay-150 duration-750 ease-in-out ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `}>
-
-                  {letras.map((letra, i) => (
-                    <div key={i} className={` w-[60px] h-[60px] border-2  border-red-400 flex items-center justify-center  text-2xl font-bold uppercase transition-all ease-in-out delay-150 duration-150 rounded-sm ${modoOscuro ? "border-white" : ""} `}>
-                      {letra}
-                    </div>
                   ))}
-
-                  {cantLetras.map((l) => (
-                    <div key={l} className={`w-[60px] h-[60px] border-2   flex items-center justify-center text-2xl font-bold uppercase  ${modoOscuro ? "bg-gray-600 border-white" : " bg-white border-red-700"}  transition-all ease-in-out delay-75 duration-700 transform rounded-sm `}>
-                    </div>
-                  )
-                  )}
                 </div>
+                <aside className={`hover:bg-amber-200 bg-white z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900  ${animar ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
+                  <span className="font-press flex text-xl mb-2 w-auto  flex-wrap ">Vidas:</span>
+                  <div className={`flex gap-2 text-2xl  flex-wrap  `}>
+                    {Array.from({ length: totalVidas }, (_, i) => (
+                      <span key={i} className={i < vidasRestantes ? `text-red-500 text-5xl ${corazonesAnimacion()}` : 'text-gray-400 text-5xl'}>
+                        ♥
+                      </span>
+                    ))}
+                  </div>
+                </aside>
+              </div>
 
-                <div className='flex justify-center mb-3 animate-girar '>
+              <div className={`flex gap-2   justify-center mb-5 transition-all delay-150 duration-750 ease-in-out ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `}>
 
-                  {finJuego ? mensajeFinal?.split("").map((l, i) =>
-                    <div key={i} className={`w-[40px] h-[40px]  cursor-pointer delay-300  text-white 
+                {letras.map((letra, i) => (
+                  <div key={i} className={` w-[60px] h-[60px] border-2  border-red-400 flex items-center justify-center  text-2xl font-bold uppercase transition-all ease-in-out delay-150 duration-150 rounded-sm ${modoOscuro ? "border-white" : ""} `}>
+                    {letra}
+                  </div>
+                ))}
+
+                {cantLetras.map((l) => (
+                  <div key={l} className={`w-[60px] h-[60px] border-2   flex items-center justify-center text-2xl font-bold uppercase  ${modoOscuro ? "bg-gray-600 border-white" : " bg-white border-red-700"}  transition-all ease-in-out delay-75 duration-700 transform rounded-sm `}>
+                  </div>
+                )
+                )}
+              </div>
+
+              <div className='flex justify-center mb-3 animate-girar '>
+
+                {finJuego ? mensajeFinal?.split("").map((l, i) =>
+                  <div key={i} className={`w-[40px] h-[40px]  cursor-pointer delay-300  text-white 
                     ${mensajeFinal === "perdiste"
-                        ? modoOscuro
-                          ? "bg-orange-600 animate-girar hover:animate-none"
-                          : "bg-orange-400 animate-girar hover:animate-none"
-                        : "bg-blue-400 animate-girar hover:animate-none"
-                      }  border-2  border-white flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out  duration-300  hover:translate-y-1  }`}>
-                      {l}
-                    </div>) : ""}
+                      ? modoOscuro
+                        ? "bg-orange-600 animate-girar hover:animate-none"
+                        : "bg-orange-400 animate-girar hover:animate-none"
+                      : "bg-blue-400 animate-girar hover:animate-none"
+                    }  border-2  border-white flex items-center justify-center text-2xl font-bold uppercase rounded-sm transition-all ease-in-out  duration-300  hover:translate-y-1  }`}>
+                    {l}
+                  </div>) : ""}
+              </div>
+
+              {finJuego &&
+                <div className='flex relative justify-self-center border-2 font-bold border-black  rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none'>
+                  <button className='cursor-pointer w-full h-full flex p-2' onClick={() => [vaciarLocalStorage(), setCartelVidas(vidasRestantes == 0 ? true : false)]}>Jugar de nuevo </button>
                 </div>
+              }
+              {cartelVidas &&
+                <div className={`flex gap-1 justify-center  text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center ${modoOscuro ? "text-black" : "text:white"}`}>
+                  <span>Te quedaste sin vidas</span>
+                  <p>Inténtalo nuevamente mas tarde</p>
+                  <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
+                </div>
+              }
 
-                {finJuego &&
-                  <div className='flex relative justify-self-center border-2 font-bold border-black  rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none'>
-                    <button className='cursor-pointer w-full h-full flex p-2' onClick={() => [vaciarLocalStorage(), setCartelVidas(vidasRestantes == 0 ? true : false)]}>Jugar de nuevo </button>
-                  </div>
-                }
-                {cartelVidas &&
-                  <div className={`flex gap-1 justify-center  text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center ${modoOscuro ? "text-black" : "text:white"}`}>
-                    <span>Te quedaste sin vidas</span>
-                    <p>Inténtalo nuevamente mas tarde</p>
-                    <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
-                  </div>
-                }
+              <footer className='font-press font-extralight w-full sticky-b-0 absolute bottom-0 justify-center flex'>
+                <div className='w-1/2 justify-evenly flex-row '>
+                  <ul className='flex gap-[10px] justify-center'>
+                    <li>
+                      <span>Correcto</span>
+                      <span >🟩</span>
+                    </li>
+                    <li>
+                      <span>Parcialmente Correcto</span>
+                      <span>🟨</span>
+                    </li>
+                    <li>
+                      <span>Incorrecto</span>
+                      <span>🟥</span>
+                    </li>
+                  </ul>
+                </div>
+              </footer>
 
-                <footer className='font-press font-extralight w-full sticky-b-0 absolute bottom-0 justify-center flex'>
-                  <div className='w-1/2 justify-evenly flex-row '>
-                    <ul className='flex gap-[10px] justify-center'>
-                      <li>
-                        <span>Correcto</span>
-                        <span >🟩</span>
-                      </li>
-                      <li>
-                        <span>Parcialmente Correcto</span>
-                        <span>🟨</span>
-                      </li>
-                      <li>
-                        <span>Incorrecto</span>
-                        <span>🟥</span>
-                      </li>
-                    </ul>
-                  </div>
-                </footer>
-              </>
-
-            }
-          </main>
+            </main>
+          }
 
         </>
       }
