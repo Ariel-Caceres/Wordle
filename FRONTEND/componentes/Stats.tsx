@@ -8,33 +8,43 @@ interface MostrarStats {
 export const Stats = ({ onClose }: MostrarStats) => {
     const { modoOscuro } = useDarkMode()
     const { intentos, resueltos, vidasGanadas, palabrasResueltas } = useStats()
-
+    const winrate = intentos > 0 ? Math.round((resueltos / intentos) * 100) : 0;
     return (
 
-        <div className={`absolute font-press gap-5  flex flex-col border-2  w-1/3 rounded-md ${modoOscuro ? "border-white" : "border-black"} -translate-y-50%  z-20  items-center  bg-amber-300 text-black justify-self-center `}>
+        <div className={`absolute font-press gap-5  flex flex-col border-2  w-1/3  rounded-md ${modoOscuro ? "border-white ring-8" : "border-black"} -translate-y-50%  z-20  items-center  bg-amber-300 text-black justify-self-center `}>
             <span className='font-press absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={onClose}>x</span>
             <span className='text-2xl pt-2'>Tus stats</span >
-            <div className="bg-yellow-200 w-full border-2 p-4 rounded-md shadow-md">
+            <div className="bg-yellow-200 hover:ml-3 w-[100%] border-2 hover:cursor-pointer p-4 rounded-md shadow-md">
                 <h3 className="text-lg">Intentos Totales:</h3>
-                <p className="text-2xl font-bold">{intentos}</p>
+                <p className="text-2xl">{intentos}</p>
             </div>
-            <div className="w:[90%] bg-green-100 w-full border-2 p-4 rounded-md shadow-md">
-                <h3 className="text-lg">Palabras Resueltas:</h3>
+            <div className="w:[90%] bg-green-100 hover:ml-3 w-full p-4 border-2 hover:cursor-pointer items-center rounded-md shadow-md">
+                <h3 className="text-lg">total de palabras Resueltas:</h3>
                 <p className="text-2xl font-bold">{resueltos}</p>
             </div>
-            <div className="bg-blue-100 w-full p-4 rounded-md border-2 shadow-md">
+            <div className="bg-blue-100 w-full hover:ml-3 hover:cursor-pointer p-4 rounded-md border-2 shadow-md">
                 <h3 className="text-lg mb-2">Palabras que resolviste:</h3>
                 <div className="flex flex-wrap gap-2">
-                    {palabrasResueltas.map((p, i) => (
-                        <span key={i} className="bg-green-300 dark:bg-green-700 text-black dark:text-white px-2 py-1 rounded-md">
-                            {p}
-                        </span>
-                    ))}
+                    {palabrasResueltas.length > 0 ?
+                        palabrasResueltas.map((p, i) => (
+                            <span key={i} className="bg-green-300 text-black  px-2 py-1 rounded-md">
+                                {p}
+                            </span>
+                        ))
+                        : <span className="px-2 py-1 rounded-md bg-amber-700 text-white">ninguna 🥀</span>
+                    }
                 </div>
             </div>
-            <div className="bg-red-100 p-4 w-full mb-2 border-2 rounded-md shadow-md">
-                <h3 className="text-lg">Vidas ganadas:</h3>
-                <p className="text-2xl font-bold text-red-600">{vidasGanadas}</p>
+            <div className="bg-red-100 p-4 w-full hover:ml-3 hover:cursor-pointer mb-2 border-2 items-center rounded-md shadow-md">
+                <h3 className="text-lg">Vidas ganadas <span className="text-red-500 text-2xl"> ❤</span>:</h3>
+                {vidasGanadas > 0 ?
+                    <p className="text-2xl text-red-500">{vidasGanadas}</p>
+                    : <span className="px-2 py-1 rounded-md bg-blue-600 text-white">0 💔</span>
+                }
+            </div>
+            <div className="bg-black p-4 w-full hover:ml-3 hover:cursor-pointer  mb-2 border-2 rounded-md shadow-md">
+                <h3 className="text-lg text-white">winrate:</h3>
+                <span className="text-2xl px-2 py-1 border-2 bg-white text-black rounded-md">{winrate}%</span>
             </div>
         </div>
 

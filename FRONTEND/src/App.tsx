@@ -3,6 +3,7 @@ import { useStats } from "../context/useStats"
 import { useDarkMode } from "../context/useDarkMode.tsx"
 import { Stats } from "../componentes/Stats.tsx"
 import { Intro } from "../componentes/Intro.tsx"
+import { Header } from "../componentes/Header.tsx"
 import './App.css'
 interface Palabra {
   palabra: string,
@@ -305,21 +306,12 @@ export const App = () => {
         </div>
       ) :
         <>
+          <Header onOpenStats={() => setMostrarStats(true)} onOpenIntro={() => setIntro(true)} />
 
-          <header className={`flex justify-center items-center font-press `}>
-            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl transition-all ease-in-out delay-75 duration-150 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `} onClick={() => setMostrarStats(!mostrarStats)}>
-              <i className="fa-solid fa-chart-simple"></i>
-            </div>
-            <div>
-              <h1 className={`font-press justify-self-center text-3xl p-10 transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>Wordle </h1>
-            </div>
-            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2  hover:border-white hover:inset-ring-2 cursor-pointer  rounded-xl transition-all ease-in-out delay-75 duration-150 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`} onClick={() => setIntro(!intro)}>
-              <i className="fa-solid fa-question" ></i>
-            </div>
-          </header>
           {mostrarStats && <Stats onClose={() => setMostrarStats(false)} />}
           {!mostrarStats && intro && <Intro onClose={() => setIntro(false)} />}
           {!mostrarStats && !intro &&
+
             <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
               <button onClick={handleChangeDark} className="w-8 absolute cursor-pointer pl-5 pr-5 pt-2 pb-2 left-60 transition-all ease-in-out duration-750 transform  z-10 border-2 rounded-md items-center justify-center flex "><i className={modoOscuro ? "fa-solid fa-toggle-off text-2xl" : "fa-solid fa-toggle-on w-full text-2xl"}></i></button>
 
