@@ -41,3 +41,22 @@
     }
   }
 }
+
+
+
+
+@theme {
+  --animate-girarIconos: girarIconos 1s ease-in-out 0.01s;
+
+  @keyframes girarIconos {
+
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+
+    50% {
+      transform: rotate(180deg);
+    }
+  }
+}

@@ -23,11 +23,16 @@ export default {
           '0%, 100%': { transform: 'translateY(1%)' },
           '50%': { transform: 'translateY(-90%)' },
         },
+        girarIconos: {
+          '0%, 100%': { transform: 'translateX(1%)' },
+          '50%': { transform: 'translateX(-90%)' },
+        }
       },
       animation: {
         girar: 'girar 1s ease-in-out infinite',
         tresCorazones: 'tresCorazones 1s ease-in-out infinite',
         cincoCorazones: 'cincoCorazones 1s ease-in-out infinite',
+        girarIconos: "girarIconos 1s ease-in-out infinite"
       }
     }
   },

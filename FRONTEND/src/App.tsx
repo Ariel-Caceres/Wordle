@@ -5,7 +5,6 @@ import { Stats } from "../componentes/Stats.tsx"
 import { Intro } from "../componentes/Intro.tsx"
 import { Header } from "../componentes/Header.tsx"
 import { Loading } from "../componentes/Loading.tsx"
-import { Footer } from "../componentes/Footer.tsx"
 import { MensajeFinal } from "../componentes/MensajeFinal.tsx"
 import './App.css'
 
@@ -19,6 +18,7 @@ export const App = () => {
     respuestas, setResuelto, setRespuestas, resuelto,
     vaciarRespuestas, intentos
   } = useStats()
+  const { modoOscuro, toggleModoOscuro } = useDarkMode();
 
   const [letras, setLetras] = useState<string[]>([])
   const [cantLetras, setCantLetras] = useState<number[]>(() => {
@@ -35,14 +35,48 @@ export const App = () => {
   const [animar, setAnimar] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
   const mensajeFinal = finJuego ? (resuelto ? "ganaste" : "perdiste") : "";
-  const totalVidas = 5
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
   const [modalAbierto, setModalAbierto] = useState<"intro" | "stats" | null>(null)
+  const totalVidas = 5
+  const abrirIntro = () => setModalAbierto(modalAbierto === "intro" ? null : "intro")
+  const abrirStats = () => setModalAbierto(modalAbierto === "stats" ? null : "stats")
+  const [animarStatsIcon, setAnimarStatsIcon] = useState(false)
+  const [animarIntroIcon, setAnimarIntroIcon] = useState(false)
 
-  const { modoOscuro, toggleModoOscuro } = useDarkMode();
-  const abrirIntro = () => setModalAbierto("intro")
-  const abrirStats = () => setModalAbierto("stats")
-  const cerrarModal = () => setModalAbierto(null)
+  const cerrarModal = () => {
+    const modalActual = modalAbierto
+    if (modalActual === "intro") {
+      animarIcono(setAnimarStatsIcon)
+    } else if (modalActual === "stats") {
+      animarIcono(setAnimarIntroIcon)
+    }
+    setModalAbierto(null)
+  }
+
+  const animarIcono = (setFn: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setFn(false)
+    setTimeout(() => setFn(true), 1)
+  }
+
+  const handleClickStats = () => {
+    abrirIntro()
+    animarIcono(setAnimarStatsIcon)
+  }
+
+  const handleClickIntro = () => {
+    abrirStats()
+    animarIcono(setAnimarIntroIcon)
+  }
+
+  const animarLogo = () => {
+    setAnimar(false)
+    const timer = setTimeout(() => {
+      setAnimar(true)
+      setAnimarIconos(true)
+    }, 750)
+    return () => clearTimeout(timer)
+  }
+
 
   const updateWord = async (respuesta: string) => {
     setLoading(true)
@@ -94,7 +128,9 @@ export const App = () => {
   }
 
   const corazonesAnimacion = () => {
-    if (vidasRestantes <= 2) {
+    if (vidasRestantes == 2) {
+      return "animate-girar"
+    } else if (vidasRestantes == 1) {
       return "animate-bounce"
     }
   }
@@ -219,9 +255,9 @@ export const App = () => {
   //Control de intro
   useEffect(() => {
     if (intentos > 0) {
-      setModalAbierto("intro")
-    } else {
       setModalAbierto(null)
+    } else {
+      setModalAbierto("intro")
     }
 
   }, [intentos]);
@@ -231,9 +267,13 @@ export const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimar(true)
+      setAnimarIconos(true)
     }, 10)
+
     return () => clearTimeout(timer)
   }, [])
+
+
 
   //CHECK game over
   useEffect(() => {
@@ -244,16 +284,20 @@ export const App = () => {
 
   }, [respuestas.length, resuelto, vidasRestantes])
 
-
   return (
-    <div className={`w-full h-full ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
+    <div className={`w-full h-full box-border ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
 
-      <Header animar={animar} onOpenStats={() => setModalAbierto("stats")} onOpenIntro={() => setModalAbierto("intro")} />
+      <Header animar={animar} animarStatsIcon={animarStatsIcon}
+        animarIntroIcon={animarIntroIcon}
+        handleClickStats={handleClickStats}
+        handleClickIntro={handleClickIntro} animarLogo={animarLogo} cerrarModal={cerrarModal} />
 
-      {modalAbierto === "intro" && <Stats onClose={cerrarModal} />}
-      {modalAbierto === "stats" && <Intro onClose={cerrarModal} />}
+      {modalAbierto === "intro" &&
+        <Intro onClose={cerrarModal} />}
+      {modalAbierto === "stats" &&
+        <Stats onClose={cerrarModal} />}
       {loading && < Loading />}
-      {!loading &&
+      {!loading && modalAbierto === null &&
 
         <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
 
@@ -280,7 +324,7 @@ export const App = () => {
                 </div>
               ))}
             </div>
-            <aside className={`hover:bg-amber-200 bg-white z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900  ${animar ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
+            <aside className={`${modoOscuro ? "bg-gray-600 border-white text-white" : "bg-white"} z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900  ${animar ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}`}>
               <span className="font-press flex text-xl mb-2 w-auto  flex-wrap ">Vidas:</span>
               <div className={`flex gap-2 text-2xl  flex-wrap  `}>
                 {Array.from({ length: totalVidas }, (_, i) => (
@@ -301,7 +345,7 @@ export const App = () => {
             ))}
 
             {cantLetras.map((l) => (
-              <div key={l} className={`w-[60px] h-[60px] border-2   flex items-center justify-center text-2xl font-bold uppercase  ${modoOscuro ? "bg-gray-600 border-white" : " bg-white border-red-700"}  transition-all ease-in-out delay-75 duration-700 transform rounded-sm `}>
+              <div key={l} className={`w-[60px] h-[60px] border-2 z-10  flex items-center justify-center text-2xl font-bold uppercase  ${modoOscuro ? "bg-gray-600 border-white" : " bg-white border-red-700"}  transition-all ease-in-out delay-75 duration-700 transform rounded-sm `}>
               </div>
             )
             )}
@@ -326,10 +370,7 @@ export const App = () => {
               <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
             </div>
           }
-          {!loading ?
-            <Footer animar={animar} animacion={`${animar ? "transition-all ease-in-out delay-75 duration-750 transform opacity-100 translate-y-0" : "transition-all ease-in-out delay-75 duration-750 transform opacity-0 translate-y-10"}`} />
-            :
-            ""}
+
         </main >
       }
     </div >
