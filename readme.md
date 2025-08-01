@@ -11,7 +11,6 @@ Este es un juego interactivo de adivinanza de palabras, desarrollado con **React
 - 🎨 Animaciones personalizadas con Tailwind CSS.
 - ⚙️ Gestión de estados globales mediante Context API.
 - 🌙 Soporte para tema claro/oscuro con preferencia del usuario.
-- 📱 Responsive y jugable desde dispositivos móviles.
 
 ---
 
@@ -20,7 +19,7 @@ Este es un juego interactivo de adivinanza de palabras, desarrollado con **React
 - **React** + **TypeScript**
 - **Tailwind CSS** para estilos y animaciones
 - **Context API** para manejo de estado global
-- **Vite** (opcional si lo usaste como bundler)
+- **Vite**
 - **CSS puro** y **Hooks personalizados**
 
 ---
@@ -29,10 +28,10 @@ Este es un juego interactivo de adivinanza de palabras, desarrollado con **React
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tuusuario/nombre-del-repo.git
+git clone https://github.com/Ariel-Caceres/Wordle-ts-mysql2
 
 # Entrar al proyecto
-cd nombre-del-repo
+cd wordle
 
 # Instalar dependencias
 npm install
@@ -40,3 +39,23 @@ npm install
 # Iniciar en modo desarrollo
 npm run dev
 ```
+
+## 🌗 Tema claro/oscuro
+
+- Detecta automáticamente el tema del navegador
+
+- Se guarda la preferencia en localStorage
+
+- Cambios en tiempo real usando matchMedia
+
+## 📌 Por hacer / Mejoras futuras
+
+-Responsive para dispositivos móviles
+
+- Agregar modo difícil con más letras
+
+- Base de datos con palabras más variadas
+
+- Traducciones o modo multilingüe
+
+- Sonidos al ganar/perder
