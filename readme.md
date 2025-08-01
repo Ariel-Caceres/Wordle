@@ -50,7 +50,7 @@ npm run dev
 
 ## 📌 Por hacer / Mejoras futuras
 
--Responsive para dispositivos móviles
+- Responsive para dispositivos móviles
 
 - Agregar modo difícil con más letras
 
