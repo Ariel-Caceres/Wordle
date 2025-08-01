@@ -1,13 +1,22 @@
+import { useEffect, useState } from "react";
 import { useDarkMode } from "../context/useDarkMode.tsx"
 
 export const MensajeFinal = ({ mensajeFinal }: { mensajeFinal: string }) => {
     const { modoOscuro } = useDarkMode();
+    const [animar, setAnimar] = useState<boolean>()
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setAnimar(true)
+        }, 10)
+        return () => clearTimeout(timer)
+    }, [])
     return (
         <>
             {mensajeFinal?.split("").map((l, i) =>
                 <div
                     key={i}
-                    className={`w-[40px] h-[40px] cursor-pointer delay-300 text-white 
+                    className={`transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} w-[40px] h-[40px] cursor-pointer delay-300 text-white 
             ${mensajeFinal === "perdiste"
                             ? modoOscuro
                                 ? "bg-orange-600 animate-girar hover:animate-none"

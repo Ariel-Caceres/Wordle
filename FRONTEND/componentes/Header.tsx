@@ -1,18 +1,12 @@
-import { useEffect, useState } from "react"
 
 interface HeaderProps {
     onOpenStats: () => void
     onOpenIntro: () => void
+    animar: boolean
 }
-export const Header = ({ onOpenStats, onOpenIntro }: HeaderProps,) => {
-    const [animar, setAnimar] = useState<boolean>(false)
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setAnimar(true)
-        }, 10)
-        return () => clearTimeout(timer)
-    }, [])
+export const Header = ({ onOpenStats, onOpenIntro, animar }: HeaderProps) => {
+
 
     return (
         <header className={`flex justify-center items-center font-press `}>

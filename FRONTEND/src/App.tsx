@@ -37,11 +37,12 @@ export const App = () => {
   const mensajeFinal = finJuego ? (resuelto ? "ganaste" : "perdiste") : "";
   const totalVidas = 5
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
-  const [intro, setIntro] = useState<boolean>()
-  const [mostrarStats, setMostrarStats] = useState<boolean>(false)
-
+  const [modalAbierto, setModalAbierto] = useState<"intro" | "stats" | null>(null)
 
   const { modoOscuro, toggleModoOscuro } = useDarkMode();
+  const abrirIntro = () => setModalAbierto("intro")
+  const abrirStats = () => setModalAbierto("stats")
+  const cerrarModal = () => setModalAbierto(null)
 
   const updateWord = async (respuesta: string) => {
     setLoading(true)
@@ -75,7 +76,6 @@ export const App = () => {
 
   const vaciarLocalStorage = () => {
     if (vidasRestantes != 0 && finJuego) {
-
       setRespuestaCorrecta("");
       vaciarRespuestas()
       setFinJuego(false);
@@ -197,7 +197,7 @@ export const App = () => {
                 ? vidasRestantes + 1
                 : vidasRestantes
           );
-          sumarVidasGanadas(2)
+          sumarVidasGanadas(vidasRestantes < 4 ? 2 : vidasRestantes === 4 ? 1 : 0)
           setCantLetras([])
         } else {
           sumarIntentos(1)
@@ -216,12 +216,12 @@ export const App = () => {
   }, [letras, finJuego, vidasRestantes, agregarPalabrasResueltas, respuestaCorrecta, setResuelto, setRespuestas, setVidasRestantes, sumarResueltos, sumarIntentos, sumarVidasGanadas])
 
 
-  //Control de intentos y vidas en el LocalStorage
+  //Control de intro
   useEffect(() => {
     if (intentos > 0) {
-      setIntro(false)
+      setModalAbierto("intro")
     } else {
-      setIntro(true)
+      setModalAbierto(null)
     }
 
   }, [intentos]);
@@ -235,10 +235,7 @@ export const App = () => {
     return () => clearTimeout(timer)
   }, [])
 
-
-
-
-
+  //CHECK game over
   useEffect(() => {
     if (vidasRestantes == 0 || resuelto === true || respuestas.length === 5) {
       setFinJuego(true)
@@ -248,16 +245,15 @@ export const App = () => {
   }, [respuestas.length, resuelto, vidasRestantes])
 
 
-
   return (
     <div className={`w-full h-full ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
 
-      <Header onOpenStats={() => setMostrarStats(!mostrarStats)} onOpenIntro={() => setIntro(!intro)} />
+      <Header animar={animar} onOpenStats={() => setModalAbierto("stats")} onOpenIntro={() => setModalAbierto("intro")} />
 
-      {mostrarStats && <Stats onClose={() => setMostrarStats(false)} />}
-      {!mostrarStats && intro && <Intro onClose={() => setIntro(false)} />}
+      {modalAbierto === "intro" && <Stats onClose={cerrarModal} />}
+      {modalAbierto === "stats" && <Intro onClose={cerrarModal} />}
       {loading && < Loading />}
-      {!mostrarStats && !intro && !loading &&
+      {!loading &&
 
         <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
 
@@ -313,26 +309,27 @@ export const App = () => {
 
           <div className='flex justify-center mb-3 animate-girar '>
 
-            {finJuego && <MensajeFinal mensajeFinal={mensajeFinal} />}
+            {!loading && finJuego && <MensajeFinal mensajeFinal={mensajeFinal} />}
           </div>
 
           {
-            finJuego &&
-            <div className='flex relative justify-self-center border-2 font-bold border-black  rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none'>
+            !loading && finJuego &&
+            <div className={`transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} flex relative justify-self-center border-2 font-bold border-black  rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none`}>
               <button className='cursor-pointer w-full h-full flex p-2' onClick={() => [vaciarLocalStorage(), setCartelVidas(vidasRestantes == 0 ? true : false)]}>Jugar de nuevo </button>
             </div>
           }
           {
-            cartelVidas &&
-            <div className={`flex gap-1 justify-center flex-col  text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center ${modoOscuro ? "text-black" : "text:white"}`}>
+            !loading && cartelVidas &&
+            <div className={` transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} flex gap-1 justify-center flex-col  text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center ${modoOscuro ? "text-black" : "text:white"}`}>
               <span>Te quedaste sin vidas</span>
               <p>Inténtalo nuevamente mas tarde</p>
               <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
             </div>
           }
-
-
-          <Footer />
+          {!loading ?
+            <Footer animar={animar} animacion={`${animar ? "transition-all ease-in-out delay-75 duration-750 transform opacity-100 translate-y-0" : "transition-all ease-in-out delay-75 duration-750 transform opacity-0 translate-y-10"}`} />
+            :
+            ""}
         </main >
       }
     </div >
