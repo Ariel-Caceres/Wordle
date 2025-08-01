@@ -14,12 +14,14 @@ export const Stats = ({ onClose }: MostrarStats) => {
 
 
     return (
-        <div className={`absolute font-press gap-5   flex flex-col border-2 w-1/3 rounded-md 
-  ${modoOscuro ? "border-white bg-black text-white" : "border-black bg-white text-black"} 
-  z-20 items-center justify-self-center `}>
+        <div className={`relative font-press gap-5   flex flex-col border-2 w-1/3 rounded-md ${modoOscuro ? "border-white bg-black text-white" : "border-black bg-white text-black"} items-center justify-self-center `}>
 
-            <button className="font-press absolute top-[-2px] right-0 text-2xl transition-all ease-in-out delay-75 duration-250 transform    shadow-md bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2 text-black" onClick={onClose}>x</button>
-
+            <button
+                className={`font-press absolute top-[-2px] transition-all ease-in-out delay-75 duration-250 transform right-0 text-2xl ${modoOscuro ? "bg-black text-white border-t-black hover:border-t-black hover:bg-white hover:text-black" : "bg-white text-black border-t-white hover:border-t-black  border-black hover:shadow-orange-50"} shadow:md hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2`}
+                onClick={onClose}
+            >
+                x
+            </button>
             <span className="text-2xl pt-2">Tus stats</span>
 
             <div className="hover:ml-3 w-full border-2 hover:cursor-pointer p-4 rounded-md shadow-md">
