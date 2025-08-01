@@ -250,9 +250,7 @@ export const App = () => {
       setModalAbierto(null)
     } else {
       setModalAbierto("intro")
-
     }
-
   }, [intentos]);
 
 
@@ -260,18 +258,18 @@ export const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimar(true)
-    }, 10)
+    }, 750)
 
     return () => clearTimeout(timer)
   }, [])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAnimar(true)
-    }, 100)
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setAnimar(true)
+  //   }, 100)
 
-    return () => clearTimeout(timer)
-  }, [])
+  //   return () => clearTimeout(timer)
+  // }, [])
 
 
   //CHECK game over
