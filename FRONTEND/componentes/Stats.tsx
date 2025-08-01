@@ -20,7 +20,10 @@ export const Stats = ({ onClose }: MostrarStats) => {
             </div>
             <div className={` hover:ml-3 w-full p-4 border-2 hover:cursor-pointer items-center rounded-md shadow-md ${modoOscuro ? " bg-gray-600 text-white" : " bg-green-200"}`}>
                 <h3 className="text-lg">total de palabras Resueltas:</h3>
-                <p className="text-2xl font-bold">{resueltos}</p>
+                {resueltos > 0 ?
+                    <p className="text-2xl font-bold">{resueltos}</p>
+                    : <span className="text-2xl">0🤡</span>
+                }
             </div>
             <div className={`bg-blue-100 w-full hover:ml-3 hover:cursor-pointer p-4 rounded-md border-2 shadow-md ${modoOscuro ? " bg-gray-700 text-white" : " bg-blue-100"}`}>
                 <h3 className="text-lg mb-2">Palabras que resolviste:</h3>
@@ -39,7 +42,7 @@ export const Stats = ({ onClose }: MostrarStats) => {
                 <h3 className="text-lg">Vidas ganadas <span className="text-red-500 text-2xl"> ❤</span>:</h3>
                 {vidasGanadas > 0 ?
                     <p className="text-2xl text-red-500">{vidasGanadas}</p>
-                    : <span className="px-2 py-1 rounded-md bg-blue-600 text-white">0 💔</span>
+                    : <span className="px-2 py-1 rounded-md bg-blue-600 text-white text-xl">0 💔</span>
                 }
             </div>
             <div className={`bg-black p-4 w-full hover:ml-3 hover:cursor-pointer  mb-2 border-2 rounded-md shadow-md ${modoOscuro ? " border-white" : "border-white"} `}>
