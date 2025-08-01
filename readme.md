@@ -24,6 +24,42 @@ Este es un juego interactivo de adivinanza de palabras, desarrollado con **React
 
 ---
 
+## 🌗 Tema claro/oscuro
+
+- Detecta automáticamente el tema del navegador
+
+- Se guarda la preferencia en localStorage
+
+- Cambios en tiempo real usando matchMedia
+
+---
+
+## 📌 Por hacer / Mejoras futuras
+
+- Responsive para dispositivos móviles
+
+- Agregar modo difícil con más letras
+
+- Base de datos con palabras más variadas
+
+- Traducciones o modo multilingüe
+
+- Sonidos al ganar/perder
+
+---
+
+## 🧠 Cómo jugar
+
+- Ingresá una palabra con la cantidad de letras correcta.
+
+- El juego te dará pistas (colores o feedback).
+
+- Tenés un número limitado de vidas.
+
+- ¡Ganás si adivinás la palabra secreta antes de perder todas tus vidas!
+
+---
+
 ## 🚀 Instalación y ejecución
 
 ```bash
@@ -38,24 +74,5 @@ npm install
 
 # Iniciar en modo desarrollo
 npm run dev
+
 ```
-
-## 🌗 Tema claro/oscuro
-
-- Detecta automáticamente el tema del navegador
-
-- Se guarda la preferencia en localStorage
-
-- Cambios en tiempo real usando matchMedia
-
-## 📌 Por hacer / Mejoras futuras
-
-- Responsive para dispositivos móviles
-
-- Agregar modo difícil con más letras
-
-- Base de datos con palabras más variadas
-
-- Traducciones o modo multilingüe
-
-- Sonidos al ganar/perder
