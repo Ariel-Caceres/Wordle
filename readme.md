@@ -21,6 +21,9 @@ Este es un juego interactivo de adivinanza de palabras, desarrollado con **React
 - **Context API** para manejo de estado global
 - **Vite**
 - **CSS puro** y **Hooks personalizados**
+- **MySQL2** Como base de datos
+- **Backend:** Node.js, Express
+- **Base de datos:** MySQL (mediante `mysql2`)
 
 ---
 
