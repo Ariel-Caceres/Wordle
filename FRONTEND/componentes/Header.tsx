@@ -18,7 +18,6 @@ export const Header = ({ animar, cerrarModal, animarLogo, animarStatsIcon, anima
         animarLogo()
     }
 
-    console.log(animarStatsIcon)
 
     return (
         <header className={`flex justify-center items-center font-press p-10 gap-10 `}>

@@ -43,42 +43,23 @@ export const App = () => {
   const [animarStatsIcon, setAnimarStatsIcon] = useState(false)
   const [animarIntroIcon, setAnimarIntroIcon] = useState(false)
   const [animarVida, setAnimarVida] = useState(false)
-  const [animarVidaAsideDiv, setAnimarVidaAsideDiv] = useState(false)
 
   const cerrarModal = () => {
     const modalActual = modalAbierto
     if (modalActual === "intro") {
-      animarIcono(setAnimarIntroIcon)
+      handleTimerGeneral(setAnimarIntroIcon)
     } else if (modalActual === "stats") {
-      animarIcono(setAnimarStatsIcon)
+      handleTimerGeneral(setAnimarStatsIcon)
     }
     setModalAbierto(null)
   }
-  const animarIcono = (setFn: React.Dispatch<React.SetStateAction<boolean>>) => {
-    setFn(false)
-    setTimeout(() => setFn(true), 1)
-  }
   const handleClickStats = () => {
     abrirStats()
-    animarIcono(setAnimarStatsIcon)
+    handleTimerGeneral(setAnimarStatsIcon)
   }
   const handleClickIntro = () => {
     abrirIntro()
-    animarIcono(setAnimarIntroIcon)
-  }
-  const animarLogo = () => {
-    setAnimar(false)
-    const timer = setTimeout(() => {
-      setAnimar(true)
-    }, 750)
-    return () => clearTimeout(timer)
-  }
-  const animarVidaAside = () => {
-    setAnimarVidaAsideDiv(false)
-    const timer = setTimeout(() => {
-      setAnimarVidaAsideDiv(true)
-    }, 50)
-    return () => clearTimeout(timer)
+    handleTimerGeneral(setAnimarIntroIcon)
   }
   const updateWord = async (respuesta: string) => {
     setLoading(true)
@@ -133,19 +114,21 @@ export const App = () => {
     }
 
   }
-
-  const animarLosMalditosCorazonesMan = () => {
-    setAnimarVida(false)
-    const timer = setTimeout(() => {
-      setAnimarVida(true)
-    }, 50)
-    return () => clearTimeout(timer)
-
-  }
-
   const handleChangeDark = () => {
     toggleModoOscuro()
   }
+  const handleTimerGeneral = (
+    setAnimacion: React.Dispatch<React.SetStateAction<boolean>>,
+    delay: number = 50
+  ) => {
+    setAnimacion(false)
+    const timer = setTimeout(() => {
+      setAnimacion(true)
+    }, delay)
+
+    return () => clearTimeout(timer)
+  }
+
 
   //FETCH DE LA PALABRA
   useEffect(() => {
@@ -245,7 +228,7 @@ export const App = () => {
           setCantLetras([])
         } else {
           sumarIntentos(1)
-          animarLosMalditosCorazonesMan()
+          handleTimerGeneral(setAnimarVida)
           const vidasDiferencia = vidasRestantes - 1;
           setVidasRestantes(vidasDiferencia);
         }
@@ -267,6 +250,7 @@ export const App = () => {
       setModalAbierto(null)
     } else {
       setModalAbierto("intro")
+
     }
 
   }, [intentos]);
@@ -289,6 +273,7 @@ export const App = () => {
     return () => clearTimeout(timer)
   }, [])
 
+
   //CHECK game over
   useEffect(() => {
     if (vidasRestantes == 0 || resuelto === true || respuestas.length === 5) {
@@ -304,7 +289,7 @@ export const App = () => {
       <Header animar={animar} animarStatsIcon={animarStatsIcon}
         animarIntroIcon={animarIntroIcon}
         handleClickStats={handleClickStats}
-        handleClickIntro={handleClickIntro} animarLogo={animarLogo} cerrarModal={cerrarModal} />
+        handleClickIntro={handleClickIntro} animarLogo={() => handleTimerGeneral(setAnimar, 750)} cerrarModal={cerrarModal} />
 
       {modalAbierto === "intro" &&
         <Intro onClose={cerrarModal} />}
@@ -338,11 +323,15 @@ export const App = () => {
                 </div>
               ))}
             </div>
-            <aside className={`${modoOscuro ? "bg-gray-600 border-white text-white" : "bg-white"}  z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-100  ${animar ? "opacity-100 translate-y-0 " : "opacity-0 -translate-y-10"} ${animarVidaAsideDiv ? "animate-giroX" : ""}`} onClick={animarVidaAside}>
+            <aside className={`${modoOscuro ? "bg-gray-600 border-white text-white" : "bg-white"}  
+            z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col 
+            items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900 
+            ` }>
               <span className="font-press flex text-xl mb-2 w-auto  flex-wrap ">Vidas:</span>
               <div className={`flex gap-2 text-2xl  flex-wrap  `}>
                 {Array.from({ length: totalVidas }, (_, i) => (
-                  <span key={i} className={i < vidasRestantes ? `text-red-500 text-5xl ${corazonesAnimacion()} ` : `text-gray-400 text-5xl ${animarVida ? "animate-shake" : ""}`}>
+                  <span key={i} className={i < vidasRestantes ? `text-red-500 text-5xl ${corazonesAnimacion()} ` :
+                    `text-gray-400 text-5xl ${animarVida ? "animate-shake" : ""}`}>
                     ♥
                   </span>
                 ))}
