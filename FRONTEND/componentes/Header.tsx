@@ -18,10 +18,13 @@ export const Header = ({ animar, cerrarModal, animarLogo, animarStatsIcon, anima
         animarLogo()
     }
 
-
     return (
         <header className={`flex justify-center items-center font-press p-10 gap-10 `}>
-            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl transition-all ease-in-out delay-75 duration-250 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `} onClick={handleClickStats}>
+            <div className={`items-center justify-center flex  pl-2 pr-2 pt-2 pb-2 
+                 hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl
+                  transition-all ease-in-out delay-75 duration-250 transform 
+                  ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
+                   `} onClick={handleClickStats}>
                 <i className={`fa-solid fa-chart-simple justify-self-start  ${animarStatsIcon ? "animate-giroX " : ""}`}></i>
 
             </div>

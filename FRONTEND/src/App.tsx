@@ -118,7 +118,7 @@ export const App = () => {
     toggleModoOscuro()
   }
   const handleTimerGeneral = (
-    setAnimacion: React.Dispatch<React.SetStateAction<boolean>>,
+    setAnimacion: (valor: boolean) => void,
     delay: number = 50
   ) => {
     setAnimacion(false)
@@ -126,9 +126,7 @@ export const App = () => {
       setAnimacion(true)
     }, delay)
 
-    return () => clearTimeout(timer)
   }
-
 
   //FETCH DE LA PALABRA
   useEffect(() => {
@@ -258,19 +256,10 @@ export const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimar(true)
-    }, 750)
+    }, 10)
 
     return () => clearTimeout(timer)
   }, [])
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setAnimar(true)
-  //   }, 100)
-
-  //   return () => clearTimeout(timer)
-  // }, [])
-
 
   //CHECK game over
   useEffect(() => {
@@ -284,7 +273,8 @@ export const App = () => {
   return (
     <div className={`w-full h-full box-border ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
 
-      <Header animar={animar} animarStatsIcon={animarStatsIcon}
+      <Header animar={animar}
+        animarStatsIcon={animarStatsIcon}
         animarIntroIcon={animarIntroIcon}
         handleClickStats={handleClickStats}
         handleClickIntro={handleClickIntro} animarLogo={() => handleTimerGeneral(setAnimar, 750)} cerrarModal={cerrarModal} />
@@ -326,7 +316,7 @@ export const App = () => {
             items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900 
             ` }>
               <span className="font-press flex text-xl mb-2 w-auto  flex-wrap ">Vidas:</span>
-              <div className={`flex gap-2 text-2xl  flex-wrap  `}>
+              <div className={`flex gap-2 text-2xl animate-tresCorazones shadow-custom-1  flex-wrap  `}>
                 {Array.from({ length: totalVidas }, (_, i) => (
                   <span key={i} className={i < vidasRestantes ? `text-red-500 text-5xl ${corazonesAnimacion()} ` :
                     `text-gray-400 text-5xl ${animarVida ? "animate-shake" : ""}`}>
@@ -371,7 +361,6 @@ export const App = () => {
               <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
             </div>
           }
-
         </main >
       }
     </div >
