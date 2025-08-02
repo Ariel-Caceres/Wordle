@@ -1,13 +1,59 @@
+import { useEffect, useState } from "react"
 import { useDarkMode } from "../context/useDarkMode.tsx"
 import { useStats } from "../context/useStats"
 
 export interface Mostrar {
     onClose: () => void
+    setFinJuego: (valor: boolean) => void
+    setCantLetras: (valor: []) => void
 }
 
-export const Intro = ({ onClose }: Mostrar) => {
-    const { intentos } = useStats()
+interface dificultadesType {
+    id: number,
+    name: string,
+    createdAt: Date,
+    updatedAt: Date,
+    deletedAt: Date,
+}
+
+
+export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
     const { modoOscuro } = useDarkMode();
+    const [dificultades, setDificultades] = useState<dificultadesType[]>([])
+    const [idiomas, setIdiomas] = useState<dificultadesType[]>([])
+    const { dificultad, setDificultad, setIdioma, intentos, idioma } = useStats()
+
+    const fetchDificultad = async () => {
+        const res = await fetch(`http://localhost:3000/difficulty`)
+        const data = await res.json()
+        setDificultades(data)
+    }
+    const fetchLenguaje = async () => {
+        const res = await fetch(`http://localhost:3000/language`)
+        const data = await res.json()
+        setIdiomas(data)
+
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setDificultad(Number(e.target.value))
+        setFinJuego(false)
+        setCantLetras([])
+
+    }
+
+    const handleChangeIdioma = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setIdioma(Number(e.target.value))
+        setFinJuego(false)
+        setCantLetras([])
+
+
+    }
+    useEffect(() => {
+        fetchDificultad()
+        fetchLenguaje()
+    }, [])
+
     return (
         <div className={`absolute pb-4 font-press gap-5 flex flex-col border-2  rounded-md ${modoOscuro ? "border-white bg-black text-white" : "border-black"} w-1/3 z-20 items-center justify-self-center`}>
             <button
@@ -48,6 +94,20 @@ export const Intro = ({ onClose }: Mostrar) => {
                     <div className="w-[30px] h-[30px] bg-red-400 justify-center flex items-center border-2 text-xl">C</div>
                     <p>Letra que no está en la palabra.</p>
                 </div>
+            </div>
+            <div className="">
+                <select name="dificultades" id="dificultades" onChange={handleChange} value={dificultad} >
+                    {dificultades.map(d => (
+                        <option key={d.id} className="bg-black" value={d.id}>{d.name}</option>
+                    ))}
+                    <option value="4" className="bg-black">Random</option>
+
+                </select>
+                <select name="2" id="2" onChange={handleChangeIdioma} value={idioma}>
+                    {idiomas.map(i => (
+                        <option key={i.id} className="bg-black" value={i.id}>{i.name}</option>
+                    ))}
+                </select>
             </div>
 
             {intentos !== 0 ? (

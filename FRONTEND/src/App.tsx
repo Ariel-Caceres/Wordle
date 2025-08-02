@@ -8,6 +8,16 @@ import { Loading } from "../componentes/Loading.tsx"
 import { MensajeFinal } from "../componentes/MensajeFinal.tsx"
 import './App.css'
 
+interface Palabra {
+  id: number,
+  name: string,
+  isCompleted: boolean,
+  language_id: number,
+  difficulty_id: number,
+  createdAt: Date,
+  updatedAt: Date,
+  deletedAt: Date | null
+}
 
 export const App = () => {
 
@@ -16,7 +26,7 @@ export const App = () => {
     setVidasRestantes, vidasRestantes,
     respuestaCorrecta, setRespuestaCorrecta,
     respuestas, setResuelto, setRespuestas, resuelto,
-    vaciarRespuestas, intentos
+    vaciarRespuestas, intentos,
   } = useStats()
   const { modoOscuro, toggleModoOscuro } = useDarkMode();
 
@@ -31,6 +41,7 @@ export const App = () => {
     }
     return []
   })
+  const { dificultad, idioma, vaciarStats } = useStats()
   const [finJuego, setFinJuego] = useState<boolean>(false)
   const [animar, setAnimar] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
@@ -43,6 +54,7 @@ export const App = () => {
   const [animarStatsIcon, setAnimarStatsIcon] = useState(false)
   const [animarIntroIcon, setAnimarIntroIcon] = useState(false)
   const [animarVida, setAnimarVida] = useState(false)
+  // const [dificultadElegida, setDificultadElegida] = useState<number>(2)
 
   const cerrarModal = () => {
     const modalActual = modalAbierto
@@ -64,7 +76,7 @@ export const App = () => {
   const updateWord = async (respuesta: string) => {
     setLoading(true)
     try {
-      const res = await fetch("http://localhost:3000/done", {
+      await fetch("http://localhost:3000/done", {
         method: "PUT",
         headers: {
           "Content-type": "application/json"
@@ -73,8 +85,8 @@ export const App = () => {
           palabra: respuesta,
         })
       })
-      const data = await res.json()
-      throw new Error(data.message || "Error al actualizar el estado de la palabra");
+
+
     } catch (error) {
       console.log("Error al actualizar el estado de la palabra", error)
     } finally {
@@ -130,17 +142,21 @@ export const App = () => {
 
   //FETCH DE LA PALABRA
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (dificultadId: number, idiomaId: number) => {
       setLoading(true)
       try {
 
-        if (!finJuego && vidasRestantes !== 0 && respuestaCorrecta == "" && respuestas.length === 0) {
-          const res = await fetch("http://localhost:3000/word")
-          const data = await res.json()
-          if (!res.ok) {
-            const msg = await data.message || "Error al traer palabra";
-            throw new Error(msg);
+        if (!finJuego && vidasRestantes !== 0 && respuestas.length === 0) {
+
+          let data: Palabra
+          if (dificultadId == 4) {
+            const res = await fetch(`http://localhost:3000/word/${idiomaId}`)
+            data = await res.json()
+          } else {
+            const res = await fetch(`http://localhost:3000/word/${idiomaId}/${dificultadId}`)
+            data = await res.json()
           }
+
           setRespuestaCorrecta(quitarAcentos(data.name.toUpperCase()))
           forCantLetras(data.name.toUpperCase())
         }
@@ -152,10 +168,10 @@ export const App = () => {
 
       }
     }
-    fetchData()
+    fetchData(dificultad, idioma)
 
-  }, [finJuego, vidasRestantes, respuestaCorrecta, respuestas, setRespuestaCorrecta])
-
+    console.log(dificultad)
+  }, [finJuego, vidasRestantes, respuestas, dificultad, idioma])
 
   //Ingreso Letras
   useEffect(() => {
@@ -251,7 +267,6 @@ export const App = () => {
     }
   }, [intentos]);
 
-
   //Animación al cargar, chill de cojones
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -267,8 +282,24 @@ export const App = () => {
       setFinJuego(true)
       setCantLetras([])
     }
-
   }, [respuestas.length, resuelto, vidasRestantes])
+
+  const handleClick = () => {
+    vaciarLocalStorage()
+    setCartelVidas(vidasRestantes == 0 ? true : false)
+  }
+  console.log(finJuego)
+
+  const handleClickContinue = () => {
+    vaciarStats()
+    setCartelVidas(false)
+    setRespuestaCorrecta("");
+    vaciarRespuestas()
+    setFinJuego(false);
+    setResuelto(false)
+    setLetras([])
+    setVidasRestantes(5)
+  }
 
   return (
     <div className={`w-full h-full box-border ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
@@ -280,7 +311,7 @@ export const App = () => {
         handleClickIntro={handleClickIntro} animarLogo={() => handleTimerGeneral(setAnimar, 750)} cerrarModal={cerrarModal} />
 
       {modalAbierto === "intro" &&
-        <Intro onClose={cerrarModal} />}
+        <Intro onClose={cerrarModal} setFinJuego={setFinJuego} setCantLetras={setLetras} />}
       {modalAbierto === "stats" &&
         <Stats onClose={cerrarModal} />}
       {loading && < Loading />}
@@ -350,15 +381,19 @@ export const App = () => {
           {
             !loading && finJuego &&
             <div className={`transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} flex relative justify-self-center border-2 font-bold border-black  rounded-md bg-blue-400 text-white  cursor-pointer transition-all text-2xl ease-in-out duration-300 hover:bg-white hover:text-black hover:translate-y-1 hover:animate-none`}>
-              <button className='cursor-pointer w-full h-full flex p-2' onClick={() => [vaciarLocalStorage(), setCartelVidas(vidasRestantes == 0 ? true : false)]}>Jugar de nuevo </button>
+              <button className='cursor-pointer w-full h-full flex p-2' onClick={handleClick}>Jugar de nuevo </button>
             </div>
           }
           {
             !loading && cartelVidas &&
-            <div className={` transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} flex gap-1 justify-center flex-col  text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-20 items-center ${modoOscuro ? "text-black" : "text:white"}`}>
-              <span>Te quedaste sin vidas</span>
-              <p>Inténtalo nuevamente mas tarde</p>
+            <div className={` transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} flex gap-1 justify-center flex-col  text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-auto items-center ${modoOscuro ? "text-black" : "text:white"}`}>
               <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
+              <span>Te quedaste sin vidas</span>
+              <p>Al jugar de nuevo vas a perder todos tus stats</p>
+              <div>
+                <button className='px-2 py-2 bg-red-400 rounded-md text-white' onClick={() => setCartelVidas(false)}>Cancelar</button>
+                <button className='px-2 py-2 bg-blue-400 rounded-md text-white' onClick={handleClickContinue}>Continuar</button>
+              </div>
             </div>
           }
         </main >
