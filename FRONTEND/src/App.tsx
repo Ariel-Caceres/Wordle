@@ -6,8 +6,9 @@ import { Intro } from "../componentes/Intro.tsx"
 import { Header } from "../componentes/Header.tsx"
 import { Loading } from "../componentes/Loading.tsx"
 import { MensajeFinal } from "../componentes/MensajeFinal.tsx"
-import './App.css'
 import { useGameState } from "../context/useGameState.tsx"
+import { Config } from "../componentes/Config.tsx"
+import './App.css'
 interface Palabra {
   id: number,
   name: string,
@@ -25,7 +26,7 @@ export const App = () => {
     sumarVidasGanadas, agregarPalabrasResueltas,
     intentos, vaciarStats
   } = useStats()
-  const { modoOscuro, toggleModoOscuro, setModoOscuro } = useGameConfig();
+  const { modoOscuro, setModoOscuro } = useGameConfig();
   const { respuestaCorrecta, vidasRestantes, respuestas,
     resuelto, setRespuestaCorrecta, setResuelto
     , setRespuestas, setVidasRestantes,
@@ -47,12 +48,14 @@ export const App = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const mensajeFinal = finJuego ? (resuelto ? "ganaste" : "perdiste") : "";
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
-  const [modalAbierto, setModalAbierto] = useState<"intro" | "stats" | null>(null)
+  const [modalAbierto, setModalAbierto] = useState<"intro" | "stats" | "config" | null>(null)
   const totalVidas = 5
   const abrirIntro = () => setModalAbierto(modalAbierto === "intro" ? null : "intro")
   const abrirStats = () => setModalAbierto(modalAbierto === "stats" ? null : "stats")
+  const abrirConfig = () => setModalAbierto(modalAbierto === "config" ? null : "config")
   const [animarStatsIcon, setAnimarStatsIcon] = useState(false)
   const [animarIntroIcon, setAnimarIntroIcon] = useState(false)
+  const [animarConfigIcon, setAnimarConfigIcon] = useState(false)
   const [animarVida, setAnimarVida] = useState(false)
 
   const cerrarModal = () => {
@@ -61,6 +64,8 @@ export const App = () => {
       handleTimerGeneral(setAnimarIntroIcon)
     } else if (modalActual === "stats") {
       handleTimerGeneral(setAnimarStatsIcon)
+    } else if (modalActual === "config") {
+      handleTimerGeneral(setAnimarConfigIcon)
     }
     setModalAbierto(null)
   }
@@ -137,6 +142,11 @@ export const App = () => {
   }
 
 
+  const handleClickConfig = () => {
+    abrirConfig()
+    handleTimerGeneral(setAnimarConfigIcon)
+
+  }
 
   //FETCH DE LA PALABRA
   useEffect(() => {
@@ -169,7 +179,6 @@ export const App = () => {
     fetchData(dificultad, idioma)
 
   }, [finJuego, vidasRestantes, respuestas, dificultad, idioma])
-  console.log(respuestas)
 
   //Ingreso Letras
   useEffect(() => {
@@ -297,16 +306,22 @@ export const App = () => {
     setLetras([])
     setVidasRestantes(5)
   }
-
   return (
     <div className={`w-full h-full box-border ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
 
       <Header animar={animar}
         animarStatsIcon={animarStatsIcon}
+        animarConfigIcon={animarConfigIcon}
         animarIntroIcon={animarIntroIcon}
         handleClickStats={handleClickStats}
-        handleClickIntro={handleClickIntro} animarLogo={() => handleTimerGeneral(setAnimar, 750)} cerrarModal={cerrarModal} />
+        handleClickIntro={handleClickIntro}
+        handleClickConfig={handleClickConfig}
+        animarLogo={() => handleTimerGeneral(setAnimar, 750)}
+        cerrarModal={cerrarModal} />
 
+      {modalAbierto === "config" &&
+        <Config handleClickConfig={handleClickConfig} />
+      }
       {modalAbierto === "intro" &&
         <Intro onClose={cerrarModal} setFinJuego={setFinJuego} setCantLetras={setLetras} />}
       {modalAbierto === "stats" &&
@@ -316,7 +331,6 @@ export const App = () => {
 
         <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
 
-          <button onClick={() => setModoOscuro(!modoOscuro)} className="w-8 absolute cursor-pointer pl-5 pr-5 pt-2 pb-2 left-60 transition-all ease-in-out duration-750 transform  z-10 border-2 rounded-md items-center justify-center flex "><i className={modoOscuro ? "fa-solid fa-toggle-off text-2xl" : "fa-solid fa-toggle-on w-full text-2xl"}></i></button >
 
           <div className=' w-full flex flex-row relative items-center justify-center'>
             <div className={`flex flex-col w-1/2`}>
