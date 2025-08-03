@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
-import { useDarkMode } from "../context/useDarkMode.tsx"
 import { useStats } from "../context/useStats"
+import { useGameConfig } from "../context/useGameConfig.tsx"
+import { useGameState } from "../context/useGameState.tsx"
 
 export interface Mostrar {
     onClose: () => void
@@ -18,10 +19,11 @@ interface dificultadesType {
 
 
 export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
-    const { modoOscuro } = useDarkMode();
     const [dificultades, setDificultades] = useState<dificultadesType[]>([])
     const [idiomas, setIdiomas] = useState<dificultadesType[]>([])
-    const { dificultad, setDificultad, setIdioma, intentos, idioma } = useStats()
+    const { dificultad, setDificultad, setIdioma, idioma, modoOscuro } = useGameConfig()
+    const { intentos } = useStats()
+    const { vaciarGameState } = useGameState()
 
     const fetchDificultad = async () => {
         const res = await fetch(`http://localhost:3000/difficulty`)
@@ -35,20 +37,20 @@ export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
 
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeDificultad = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setDificultad(Number(e.target.value))
         setFinJuego(false)
         setCantLetras([])
-
+        vaciarGameState()
     }
 
     const handleChangeIdioma = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        vaciarGameState()
         setIdioma(Number(e.target.value))
         setFinJuego(false)
         setCantLetras([])
-
-
     }
+
     useEffect(() => {
         fetchDificultad()
         fetchLenguaje()
@@ -96,7 +98,7 @@ export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
                 </div>
             </div>
             <div className="">
-                <select name="dificultades" id="dificultades" onChange={handleChange} value={dificultad} >
+                <select name="dificultades" id="dificultades" onChange={handleChangeDificultad} value={dificultad} >
                     {dificultades.map(d => (
                         <option key={d.id} className="bg-black" value={d.id}>{d.name}</option>
                     ))}

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useDarkMode } from "../context/useDarkMode.tsx"
+import { useGameConfig } from "../context/useGameConfig"
 
 export const MensajeFinal = ({ mensajeFinal }: { mensajeFinal: string }) => {
-    const { modoOscuro } = useDarkMode();
+    const { modoOscuro } = useGameConfig();
     const [animar, setAnimar] = useState<boolean>()
 
     useEffect(() => {

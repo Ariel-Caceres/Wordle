@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useStats } from "../context/useStats"
-import { useDarkMode } from "../context/useDarkMode.tsx"
+import { useGameConfig } from "../context/useGameConfig.tsx"
 import { Stats } from "../componentes/Stats.tsx"
 import { Intro } from "../componentes/Intro.tsx"
 import { Header } from "../componentes/Header.tsx"
@@ -25,7 +25,7 @@ export const App = () => {
     sumarVidasGanadas, agregarPalabrasResueltas,
     intentos, vaciarStats
   } = useStats()
-  const { modoOscuro, toggleModoOscuro } = useDarkMode();
+  const { modoOscuro, toggleModoOscuro, setModoOscuro } = useGameConfig();
   const { respuestaCorrecta, vidasRestantes, respuestas,
     resuelto, setRespuestaCorrecta, setResuelto
     , setRespuestas, setVidasRestantes,
@@ -41,7 +41,7 @@ export const App = () => {
     }
     return []
   })
-  const { dificultad, idioma } = useStats()
+  const { dificultad, idioma } = useGameConfig()
   const [finJuego, setFinJuego] = useState<boolean>(false)
   const [animar, setAnimar] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
@@ -124,9 +124,6 @@ export const App = () => {
       return "animate-bounce"
     }
 
-  }
-  const handleChangeDark = () => {
-    toggleModoOscuro()
   }
   const handleTimerGeneral = (
     setAnimacion: (valor: boolean) => void,
@@ -319,7 +316,7 @@ export const App = () => {
 
         <main className={modoOscuro ? "bg-black text-white" : "bg-white text-black "}>
 
-          <button onClick={handleChangeDark} className="w-8 absolute cursor-pointer pl-5 pr-5 pt-2 pb-2 left-60 transition-all ease-in-out duration-750 transform  z-10 border-2 rounded-md items-center justify-center flex "><i className={modoOscuro ? "fa-solid fa-toggle-off text-2xl" : "fa-solid fa-toggle-on w-full text-2xl"}></i></button >
+          <button onClick={() => setModoOscuro(!modoOscuro)} className="w-8 absolute cursor-pointer pl-5 pr-5 pt-2 pb-2 left-60 transition-all ease-in-out duration-750 transform  z-10 border-2 rounded-md items-center justify-center flex "><i className={modoOscuro ? "fa-solid fa-toggle-off text-2xl" : "fa-solid fa-toggle-on w-full text-2xl"}></i></button >
 
           <div className=' w-full flex flex-row relative items-center justify-center'>
             <div className={`flex flex-col w-1/2`}>

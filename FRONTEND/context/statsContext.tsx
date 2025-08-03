@@ -6,14 +6,7 @@ export interface respuestasInterface {
     colores: string[]
 }
 
-interface gameStateType {
-    respuestaCorrecta: string,
-    vidasRestantes: number
-    respuestas: respuestasInterface[],
-    resuelto: boolean,
-    dificultad: number,
-    idioma: number
-}
+
 
 interface StatsContextType {
     intentos: number,
@@ -26,10 +19,7 @@ interface StatsContextType {
     sumarVidasGanadas: (numero: number) => void;
     agregarPalabrasResueltas: (palabra: string) => void;
 
-    dificultad: number,
-    setDificultad: (dificultad: number) => void,
-    idioma: number,
-    setIdioma: (id: number) => void,
+
     vaciarStats: () => void
 }
 
@@ -54,35 +44,6 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
 
             };
     });
-
-    const [gameState, setGameState] = useState<gameStateType>(() => {
-        const gameStateLS = localStorage.getItem("gameState")
-        if (gameStateLS) {
-            return JSON.parse(gameStateLS) as gameStateType
-        }
-        return {
-            respuestaCorrecta: "",
-            vidasRestantes: 5,
-            respuestas: [],
-            resuelto: false,
-            dificultad: 2,
-            idioma: 1
-        }
-    })
-
-    const setDificultad = (dificultad: number) => {
-        setGameState(prev => ({ ...prev, dificultad: dificultad }))
-        setGameState(prev => ({ ...prev, vidasRestantes: 5 }))
-        setGameState(prev => ({ ...prev, respuestas: [] }))
-        setGameState(prev => ({ ...prev, resuelto: false }))
-    }
-    const setIdioma = (id: number) => {
-        setGameState(prev => ({ ...prev, idioma: id }))
-        setGameState(prev => ({ ...prev, vidasRestantes: 5 }))
-        setGameState(prev => ({ ...prev, respuestas: [] }))
-        setGameState(prev => ({ ...prev, resuelto: false }))
-
-    }
     const sumarIntentos = (numero: number) => {
         setStats(prev => ({ ...prev, intentos: prev.intentos + numero }))
     }
@@ -125,10 +86,7 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
             palabrasResueltas: stats.palabrasResueltas,
 
 
-            dificultad: gameState.dificultad,
-            setDificultad,
-            idioma: gameState.idioma,
-            setIdioma,
+
             vaciarStats
         }}>
             {children}
