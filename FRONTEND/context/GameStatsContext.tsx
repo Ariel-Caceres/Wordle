@@ -23,9 +23,9 @@ interface StatsContextType {
     vaciarStats: () => void
 }
 
-export const StatsContext = createContext<StatsContextType | undefined>(undefined);
+export const GameStatsContext = createContext<StatsContextType | undefined>(undefined);
 
-export const StatsProvider = ({ children }: { children: ReactNode }) => {
+export const GameStatsProvider = ({ children }: { children: ReactNode }) => {
     const [stats, setStats] = useState<{
         intentos: number;
         resueltos: number;
@@ -74,7 +74,7 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
     }, [stats])
 
     return (
-        <StatsContext.Provider value={{
+        <GameStatsContext.Provider value={{
             sumarIntentos,
             sumarResueltos,
             sumarVidasGanadas,
@@ -90,6 +90,6 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
             vaciarStats
         }}>
             {children}
-        </StatsContext.Provider>
+        </GameStatsContext.Provider>
     )
 }

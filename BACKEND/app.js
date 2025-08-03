@@ -19,19 +19,25 @@ app.get("/word/:language", async (req, res) => {
     res.json(palabra)
 })
 
+
 app.get("/word/:language/:dificulty", async (req, res) => {
-    let dificulty = parseInt(req.params.dificulty)
-    let language = req.params.language
+    let dificulty = parseInt(req.params.dificulty);
+    let language = parseInt(req.params.language);
 
-    const palabra = await db.word.findOne(
-        {
-            where: { isCompleted: false, language_id: language, difficulty_id: dificulty },
-            order: Sequelize.literal("RAND()")
-        })
-    if (!palabra) return json.status(400).json("Error al encontrar palabra")
-    res.json(palabra)
-})
+    const palabra = await db.word.findOne({
+        where: {
+            isCompleted: false,
+            language_id: language,
+            difficulty_id: dificulty
+        },
+        order: Sequelize.literal("RAND()")
+    });
 
+    if (!palabra) {
+        return res.status(404).json({ error: "No se encontró una palabra para esos parámetros." });
+    }
+    res.json(palabra);
+});
 
 app.get("/word/randomLanguage", async (req, res) => {
     const palabra = await db.word.findOne(
@@ -57,7 +63,7 @@ app.get("/language", async (req, res) => {
 app.put("/done", async (req, res) => {
     let palabraAEditar = req.body.palabra
     const palabraEncontrada = await db.word.findOne({ where: { name: palabraAEditar } })
-    // if (!palabraEncontrada) return res.status(400).json("No se encontro la palabra")
+    if (!palabraEncontrada) return res.status(400).json("No se encontro la palabra")
     await palabraEncontrada.update({ isCompleted: true })
     return res.status(200).json("todo ok")
 })

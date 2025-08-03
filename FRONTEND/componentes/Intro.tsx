@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
-import { useStats } from "../context/useStats"
+import { useGameStats } from "../context/useGameStats.tsx"
 import { useGameConfig } from "../context/useGameConfig.tsx"
 import { useGameState } from "../context/useGameState.tsx"
+import { useEffect, useState } from "react"
 
 export interface Mostrar {
     onClose: () => void
@@ -9,33 +9,13 @@ export interface Mostrar {
     setCantLetras: (valor: []) => void
 }
 
-interface dificultadesType {
-    id: number,
-    name: string,
-    createdAt: Date,
-    updatedAt: Date,
-    deletedAt: Date,
-}
 
 
 export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
-    const [dificultades, setDificultades] = useState<dificultadesType[]>([])
-    const [idiomas, setIdiomas] = useState<dificultadesType[]>([])
-    const { dificultad, setDificultad, setIdioma, idioma, modoOscuro } = useGameConfig()
-    const { intentos } = useStats()
+    const { dificultad, setDificultad, setIdioma, idioma, modoOscuro, dificultades, idiomas } = useGameConfig()
+    const { intentos } = useGameStats()
     const { vaciarGameState } = useGameState()
 
-    const fetchDificultad = async () => {
-        const res = await fetch(`http://localhost:3000/difficulty`)
-        const data = await res.json()
-        setDificultades(data)
-    }
-    const fetchLenguaje = async () => {
-        const res = await fetch(`http://localhost:3000/language`)
-        const data = await res.json()
-        setIdiomas(data)
-
-    }
 
     const handleChangeDificultad = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setDificultad(Number(e.target.value))
@@ -51,11 +31,6 @@ export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
         setCantLetras([])
     }
 
-    useEffect(() => {
-        fetchDificultad()
-        fetchLenguaje()
-    }, [])
-
     return (
         <div className={`absolute pb-4 font-press gap-5 flex flex-col border-2  rounded-md ${modoOscuro ? "border-white bg-black text-white" : "border-black"} w-1/3 z-20 items-center justify-self-center`}>
             <button
@@ -69,13 +44,13 @@ export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
 
             <div className="w-[90%] border-2 p-1 rounded-md hover:shadow-red-400 shadow-md">
                 <h3 className="p-1">Cuando te equivocás:</h3>
-                <p>Perdés una vida ➖💔</p>
-                <p>Si te quedás sin vidas, el juego termina.</p>
+                <span className="">Perdés una vida <span className="text-2xl">➖💔</span></span  >
+                <p>Si te quedás sin vidas, el juego termina y perdes todos tus stats.</p>
             </div>
 
             <div className="w-[90%] border-2 p-1 rounded-md hover:shadow-green-200 shadow-md">
                 <h3 className="p-1">Cuando acertás:</h3>
-                <p>Ganás dos vidas ➕ <span className="text-red-600 text-2xl">♥♥</span></p>
+                <p>Ganás dos vidas  <span className="text-red-600 text-2xl">➕💗💗</span></p>
                 <p>Podés seguir jugando mientras tengas vidas.</p>
             </div>
 
@@ -97,32 +72,54 @@ export const Intro = ({ onClose, setFinJuego, setCantLetras }: Mostrar) => {
                     <p>Letra que no está en la palabra.</p>
                 </div>
             </div>
-            <div className="">
-                <select name="dificultades" id="dificultades" onChange={handleChangeDificultad} value={dificultad} >
-                    {dificultades.map(d => (
-                        <option key={d.id} className="bg-black" value={d.id}>{d.name}</option>
-                    ))}
-                    <option value="4" className="bg-black">Random</option>
 
-                </select>
-                <select name="2" id="2" onChange={handleChangeIdioma} value={idioma}>
-                    {idiomas.map(i => (
-                        <option key={i.id} className="bg-black" value={i.id}>{i.name}</option>
-                    ))}
-                </select>
-            </div>
 
-            {intentos !== 0 ? (
-                ""
-            ) : (
-                <button
-                    className={`justify-self-center border-2 p-2 mb-2 rounded-md bg-blue-500 text-white text-2xl cursor-pointer ${intentos > 0 ? "flex-none" : ""}`}
-                    onClick={onClose}
-                >
-                    JUGAR
-                </button>
-            )}
-        </div>
+
+
+            {
+                intentos !== 0 ? (
+                    ""
+                ) : (
+                    <div className=" flex-col items-center flex gap-4">
+                        <div className="flex">
+                            <select
+                                name="selectIdioma" id="1"
+                                className=" cursor-pointer px-5 py-2 left-60 transition-all ease-in-out duration-750 
+                                transform  z-10 border-2 rounded-md items-center justify-center flex "
+                                onChange={handleChangeIdioma}
+                                value={idioma}>
+
+                                {idiomas.map(d => (
+                                    <option key={d.id} value={d.id}
+                                        className={`${modoOscuro ? "bg-black text-white"
+                                            : "bg-white text-black"}`}>
+                                        {d.name === "spanish" ? "Español" : "Ingles"}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select name="selectDificultades" id="2" onChange={handleChangeDificultad} value={dificultad} className=" 
+                                         cursor-pointer px-5 py-2 left-60 transition-all ease-in-out duration-750 
+                                         transform  z-10 border-2 rounded-md items-center justify-center flex ">
+                                {dificultades.map(d => (
+                                    <option key={d.id} value={d.id} className={`${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>{d.name == "easy" ? "facil" : d.name == "normal" ? "normal" : "dificil"}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <button
+                            className={`justify-self-center flex border-2 p-2 mb-2 rounded-md bg-blue-500 text-white text-2xl cursor-pointer ${intentos > 0 ? "flex-none" : ""}`}
+                            onClick={onClose}
+                        >
+                            JUGAR
+                        </button>
+                    </div>
+                )
+            }
+        </div >
+
+
+
     )
 
 

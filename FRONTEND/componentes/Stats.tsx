@@ -1,4 +1,4 @@
-import { useStats } from "../context/useStats"
+import { useGameStats } from "../context/useGameStats.tsx"
 import { useGameConfig } from "../context/useGameConfig.tsx"
 
 interface MostrarStats {
@@ -7,7 +7,7 @@ interface MostrarStats {
 
 export const Stats = ({ onClose }: MostrarStats) => {
     const { modoOscuro } = useGameConfig()
-    const { intentos, resueltos, vidasGanadas, palabrasResueltas } = useStats()
+    const { intentos, resueltos, vidasGanadas, palabrasResueltas } = useGameStats()
     const winrate = intentos > 0 ? Math.round((resueltos / intentos) * 100) : 0;
 
 

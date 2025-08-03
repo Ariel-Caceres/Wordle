@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import type { respuestasInterface } from "./StatsContext"
-
+import type { respuestasInterface } from "./GameStatsContext"
+import { useGameStats } from "../context/useGameStats"
 interface gameStateType {
     respuestaCorrecta: string,
     vidasRestantes: number
@@ -39,6 +39,7 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
 
         }
     })
+    const { resuelto, cantidadDeVidas } = useGameStats()
     const vaciarGameState = () => {
 
         setGameState(prev => ({

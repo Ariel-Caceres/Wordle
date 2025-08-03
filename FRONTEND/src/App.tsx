@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useStats } from "../context/useStats"
+import { useGameStats } from "../context/useGameStats.tsx"
 import { useGameConfig } from "../context/useGameConfig.tsx"
 import { Stats } from "../componentes/Stats.tsx"
 import { Intro } from "../componentes/Intro.tsx"
@@ -25,13 +25,15 @@ export const App = () => {
   const { sumarIntentos, sumarResueltos,
     sumarVidasGanadas, agregarPalabrasResueltas,
     intentos, vaciarStats
-  } = useStats()
-  const { modoOscuro, setModoOscuro } = useGameConfig();
+  } = useGameStats()
+  const { modoOscuro } = useGameConfig();
   const { respuestaCorrecta, vidasRestantes, respuestas,
     resuelto, setRespuestaCorrecta, setResuelto
     , setRespuestas, setVidasRestantes,
     vaciarRespuestas } = useGameState()
+
   const [letras, setLetras] = useState<string[]>([])
+
   const [cantLetras, setCantLetras] = useState<number[]>(() => {
     if (respuestaCorrecta) {
       const arrayAux = []
@@ -42,6 +44,7 @@ export const App = () => {
     }
     return []
   })
+
   const { dificultad, idioma } = useGameConfig()
   const [finJuego, setFinJuego] = useState<boolean>(false)
   const [animar, setAnimar] = useState<boolean>(false)
@@ -153,20 +156,21 @@ export const App = () => {
     const fetchData = async (dificultadId: number, idiomaId: number) => {
       setLoading(true)
       try {
-
+        let url = ""
         if (!finJuego && vidasRestantes !== 0 && respuestas.length === 0) {
-
-          let data: Palabra
-          if (dificultadId == 4) {
-            const res = await fetch(`http://localhost:3000/word/${idiomaId}`)
-            data = await res.json()
+          if (dificultadId === 4) {
+            url = `http://localhost:3000/word/${idiomaId}`
           } else {
-            const res = await fetch(`http://localhost:3000/word/${idiomaId}/${dificultadId}`)
-            data = await res.json()
+            url = `http://localhost:3000/word/${idiomaId}/${dificultadId}`
           }
-
-          setRespuestaCorrecta(quitarAcentos(data.name.toUpperCase()))
-          forCantLetras(data.name.toUpperCase())
+          const res = await fetch(url);
+          if (!res.ok) {
+            throw new Error("error al traer la palabra");
+          } else {
+            const data: Palabra = await res.json()
+            setRespuestaCorrecta(quitarAcentos(data.name.toUpperCase()))
+            forCantLetras(data.name.toUpperCase())
+          }
         }
       } catch (error) {
         console.log("Error al traer palabra", error)
@@ -179,6 +183,8 @@ export const App = () => {
     fetchData(dificultad, idioma)
 
   }, [finJuego, vidasRestantes, respuestas, dificultad, idioma])
+
+
 
   //Ingreso Letras
   useEffect(() => {
@@ -306,6 +312,9 @@ export const App = () => {
     setLetras([])
     setVidasRestantes(5)
   }
+
+  console.log(finJuego)
+
   return (
     <div className={`w-full h-full box-border ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
 
@@ -320,11 +329,11 @@ export const App = () => {
         cerrarModal={cerrarModal} />
 
       {modalAbierto === "config" &&
-        <Config handleClickConfig={handleClickConfig} />
+        <Config handleClickConfig={handleClickConfig} setFinjuego={setFinJuego} />
       }
       {modalAbierto === "intro" &&
         <Intro onClose={cerrarModal} setFinJuego={setFinJuego} setCantLetras={setLetras} />}
-      {modalAbierto === "stats" &&
+      {!loading && modalAbierto === "stats" &&
         <Stats onClose={cerrarModal} />}
       {loading && < Loading />}
       {!loading && modalAbierto === null &&
@@ -397,13 +406,22 @@ export const App = () => {
           }
           {
             !loading && cartelVidas &&
-            <div className={` transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} flex gap-1 justify-center flex-col  text-md font-press bg-amber-200 absolute rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-auto items-center ${modoOscuro ? "text-black" : "text:white"}`}>
-              <span className='absolute top-[-2px] right-0 text-2xl bg-white hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2' onClick={() => setCartelVidas(!cartelVidas)}>x</span>
+            <div className={` transition-all ease-in-out delay-75 duration-750 transform 
+            ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} 
+            flex gap-1 justify-center flex-col p-2  text-md font-press  absolute
+             rounded-md border-2 top-1/3 left-1/2 -translate-x-1/2 w-1/3 h-auto items-center
+              ${modoOscuro ? "text-white bg-black " : "text-black bg-white"}`}>
+              <button
+                className={`font-press absolute top-[-2px] transition-all ease-in-out delay-75 duration-250 transform right-0 text-2xl ${modoOscuro ? "bg-black text-white border-t-black hover:border-t-black hover:bg-white hover:text-black" : "bg-white text-black border-t-white hover:border-t-black  border-black hover:shadow-orange-50"} shadow:md hover:-translate-y-1 rounded-b-2xl border-2 cursor-pointer pb-2 pr-2 pl-2`}
+                onClick={() => setCartelVidas(false)}>
+                x
+              </button>
               <span>Te quedaste sin vidas</span>
               <p>Al jugar de nuevo vas a perder todos tus stats</p>
               <div>
-                <button className='px-2 py-2 bg-red-400 rounded-md text-white' onClick={() => setCartelVidas(false)}>Cancelar</button>
-                <button className='px-2 py-2 bg-blue-400 rounded-md text-white' onClick={handleClickContinue}>Continuar</button>
+                <button className={`px-2 py-2 border-2 rounded-md ${modoOscuro ? "bg-white text-black" : "bg-black text-white border-white"}`} onClick={() => setCartelVidas(false)}>Cancelar</button>
+                <button className={`px-2 py-2 border-2 rounded-md ${modoOscuro ? "bg-black text-white border-white" : "bg-white text-black"}`} onClick={handleClickContinue}>Continuar</button>
+
               </div>
             </div>
           }

@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { StatsContext } from "./StatsContext";
+import { GameStatsContext } from "./GameStatsContext";
 
-export const useStats = () => {
-    const context = useContext(StatsContext);
+export const useGameStats = () => {
+    const context = useContext(GameStatsContext);
     if (!context) {
         throw new Error("useStats debe usarse dentro de un StatsProvider");
     }

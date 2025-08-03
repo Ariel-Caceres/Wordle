@@ -1,0 +1,470 @@
+[
+  {
+    "name": "sol",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "sun",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "luz",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "light",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "mar",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "sea",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "cielo",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "sky",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "fuego",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "fire",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "agua",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "water",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "tierra",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "earth",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "viento",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "wind",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "nube",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "cloud",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "estrella",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "star",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "noche",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "night",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "día",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "day",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "flor",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "flower",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "árbol",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "tree",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "hoja",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "leaf",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "montaña",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "mountain",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "río",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "river",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "lluvia",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "rain",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "nieve",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "snow",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "trueno",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "thunder",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "relámpago",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "lightning",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "camino",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "path",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "puerta",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "door",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "ventana",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "window",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "fuerza",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "strength",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "sombra",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "shadow",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "piedra",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "stone",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "casa",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "house",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "corazón",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "heart",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "alma",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "soul",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "sangre",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "blood",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "espada",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "sword",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "batalla",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "battle",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "rey",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 1
+  },
+  {
+    "name": "king",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "reina",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "queen",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "muerte",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "death",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "vida",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "life",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "tiempo",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 3
+  },
+  {
+    "name": "time",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "mundo",
+    "language_id": 1,
+    "isCompleted": false,
+    "difficulty_id": 2
+  },
+  {
+    "name": "world",
+    "language_id": 2,
+    "isCompleted": false,
+    "difficulty_id": 2
+  }
+]

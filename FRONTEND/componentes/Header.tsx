@@ -22,9 +22,17 @@ export const Header = ({ animar, cerrarModal, animarLogo, animarStatsIcon, anima
 
     return (
         <header className={`flex justify-center  items-center font-press p-10 gap-10`}>
-            <button className=''>
-                <i className=""></i>
-            </button>
+            <div className={`items-center relative justify-center flex gap-2 pl-2 pr-2 pt-2 pb-2 
+                 hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl
+                  transition-all ease-in-out delay-75 duration-250 transform 
+                  ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
+                  `} onClick={handleClickStats}
+            >
+                <a href="https://github.com/Ariel-Caceres" target="_blank" className=''>
+                    <i className="fa-brands fa-github"></i>
+                </a >
+
+            </div>
             <div className={`items-center relative justify-center flex gap-2 pl-2 pr-2 pt-2 pb-2 
                  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl
                   transition-all ease-in-out delay-75 duration-250 transform 
