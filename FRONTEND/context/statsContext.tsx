@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-interface respuestasInterface {
+export interface respuestasInterface {
     palabra: string,
     colores: string[]
 }
@@ -25,17 +25,6 @@ interface StatsContextType {
     sumarResueltos: (numero: number) => void;
     sumarVidasGanadas: (numero: number) => void;
     agregarPalabrasResueltas: (palabra: string) => void;
-
-    respuestaCorrecta: string,
-    vidasRestantes: number
-    respuestas: respuestasInterface[],
-    resuelto: boolean,
-
-    setRespuestaCorrecta: (respuesta: string) => void,
-    setVidasRestantes: (vida: number) => void,
-    setRespuestas: (respuesta: respuestasInterface) => void,
-    setResuelto: (valor: boolean) => void
-    vaciarRespuestas: () => void,
 
     dificultad: number,
     setDificultad: (dificultad: number) => void,
@@ -110,33 +99,7 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
             ...prev, palabrasResueltas: [...prev.palabrasResueltas, palabra]
         }))
     }
-    const setRespuestaCorrecta = (palabra: string) => {
-        setGameState(prev => ({ ...prev, respuestaCorrecta: palabra }))
-    }
-    const setVidasRestantes = (numero: number) => {
-        setGameState(prev => ({ ...prev, vidasRestantes: numero }))
-    }
-    const setRespuestas = (respuesta: respuestasInterface) => {
-        setGameState(prev => ({ ...prev, respuestas: [...prev.respuestas, respuesta] }))
-    }
-    const vaciarRespuestas = () => {
-        setGameState(prev => ({ ...prev, respuestas: [] }))
-    }
-    const setResuelto = (valor: boolean) => {
-        setGameState(prev => ({ ...prev, resuelto: valor }))
-    }
     const vaciarStats = () => {
-
-        setGameState(prev => ({
-            ...prev,
-            respuestaCorrecta: "",
-            vidasRestantes: 5,
-            respuestas: [],
-            resuelto: false,
-
-        })
-
-        )
         setStats({
             intentos: 0,
             resueltos: 0,
@@ -144,13 +107,10 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
             palabrasResueltas: [],
         })
     }
+
     useEffect(() => {
         localStorage.setItem("stats", JSON.stringify(stats))
     }, [stats])
-
-    useEffect(() => {
-        localStorage.setItem("gameState", JSON.stringify(gameState))
-    }, [gameState])
 
     return (
         <StatsContext.Provider value={{
@@ -164,16 +124,6 @@ export const StatsProvider = ({ children }: { children: ReactNode }) => {
             vidasGanadas: stats.vidasGanadas,
             palabrasResueltas: stats.palabrasResueltas,
 
-
-            setRespuestaCorrecta,
-            setRespuestas,
-            setResuelto,
-            setVidasRestantes,
-            vaciarRespuestas,
-            respuestaCorrecta: gameState.respuestaCorrecta,
-            resuelto: gameState.resuelto,
-            vidasRestantes: gameState.vidasRestantes,
-            respuestas: gameState.respuestas,
 
             dificultad: gameState.dificultad,
             setDificultad,

@@ -7,7 +7,7 @@ import { Header } from "../componentes/Header.tsx"
 import { Loading } from "../componentes/Loading.tsx"
 import { MensajeFinal } from "../componentes/MensajeFinal.tsx"
 import './App.css'
-
+import { useGameState } from "../context/useGameState.tsx"
 interface Palabra {
   id: number,
   name: string,
@@ -23,13 +23,13 @@ export const App = () => {
 
   const { sumarIntentos, sumarResueltos,
     sumarVidasGanadas, agregarPalabrasResueltas,
-    setVidasRestantes, vidasRestantes,
-    respuestaCorrecta, setRespuestaCorrecta,
-    respuestas, setResuelto, setRespuestas, resuelto,
-    vaciarRespuestas, intentos,
+    intentos, vaciarStats
   } = useStats()
   const { modoOscuro, toggleModoOscuro } = useDarkMode();
-
+  const { respuestaCorrecta, vidasRestantes, respuestas,
+    resuelto, setRespuestaCorrecta, setResuelto
+    , setRespuestas, setVidasRestantes,
+    vaciarRespuestas } = useGameState()
   const [letras, setLetras] = useState<string[]>([])
   const [cantLetras, setCantLetras] = useState<number[]>(() => {
     if (respuestaCorrecta) {
@@ -41,7 +41,7 @@ export const App = () => {
     }
     return []
   })
-  const { dificultad, idioma, vaciarStats } = useStats()
+  const { dificultad, idioma } = useStats()
   const [finJuego, setFinJuego] = useState<boolean>(false)
   const [animar, setAnimar] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
@@ -54,7 +54,6 @@ export const App = () => {
   const [animarStatsIcon, setAnimarStatsIcon] = useState(false)
   const [animarIntroIcon, setAnimarIntroIcon] = useState(false)
   const [animarVida, setAnimarVida] = useState(false)
-  // const [dificultadElegida, setDificultadElegida] = useState<number>(2)
 
   const cerrarModal = () => {
     const modalActual = modalAbierto
@@ -140,6 +139,8 @@ export const App = () => {
 
   }
 
+
+
   //FETCH DE LA PALABRA
   useEffect(() => {
     const fetchData = async (dificultadId: number, idiomaId: number) => {
@@ -170,8 +171,8 @@ export const App = () => {
     }
     fetchData(dificultad, idioma)
 
-    console.log(dificultad)
   }, [finJuego, vidasRestantes, respuestas, dificultad, idioma])
+  console.log(respuestas)
 
   //Ingreso Letras
   useEffect(() => {
@@ -288,7 +289,6 @@ export const App = () => {
     vaciarLocalStorage()
     setCartelVidas(vidasRestantes == 0 ? true : false)
   }
-  console.log(finJuego)
 
   const handleClickContinue = () => {
     vaciarStats()
