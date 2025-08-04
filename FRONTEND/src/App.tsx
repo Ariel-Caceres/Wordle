@@ -51,15 +51,15 @@ export const App = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const mensajeFinal = finJuego ? (resuelto ? "ganaste" : "perdiste") : "";
   const [cartelVidas, setCartelVidas] = useState<boolean>(false)
-  const [modalAbierto, setModalAbierto] = useState<"intro" | "stats" | "config" | null>(null)
   const totalVidas = 5
+  const [modalAbierto, setModalAbierto] = useState<"intro" | "stats" | "config" | null>(null)
   const abrirIntro = () => setModalAbierto(modalAbierto === "intro" ? null : "intro")
   const abrirStats = () => setModalAbierto(modalAbierto === "stats" ? null : "stats")
   const abrirConfig = () => setModalAbierto(modalAbierto === "config" ? null : "config")
   const [animarStatsIcon, setAnimarStatsIcon] = useState(false)
   const [animarIntroIcon, setAnimarIntroIcon] = useState(false)
   const [animarConfigIcon, setAnimarConfigIcon] = useState(false)
-  const [animarVida, setAnimarVida] = useState(false)
+  const [animarCantLetras, setAnimarCantLetras] = useState(false)
 
   const cerrarModal = () => {
     const modalActual = modalAbierto
@@ -71,19 +71,24 @@ export const App = () => {
       handleTimerGeneral(setAnimarConfigIcon)
     }
     setModalAbierto(null)
-    handleTimerGeneral(setAnimarVida, 150)
+    handleTimerGeneral(setAnimarCantLetras, 150)
 
   }
   const handleClickStats = () => {
     abrirStats()
-    handleTimerGeneral(setAnimarVida, 150)
+    handleTimerGeneral(setAnimarCantLetras, 10)
     handleTimerGeneral(setAnimarStatsIcon)
   }
   const handleClickIntro = () => {
     abrirIntro()
-    handleTimerGeneral(setAnimarVida, 150)
-
+    handleTimerGeneral(setAnimarCantLetras, 10)
     handleTimerGeneral(setAnimarIntroIcon)
+
+  }
+  const handleClickConfig = () => {
+    abrirConfig()
+    handleTimerGeneral(setAnimarConfigIcon)
+    handleTimerGeneral(setAnimarCantLetras, 10)
   }
   const updateWord = async (respuesta: string) => {
     setLoading(true)
@@ -147,11 +152,6 @@ export const App = () => {
       setAnimacion(true)
     }, delay)
 
-  }
-  const handleClickConfig = () => {
-    abrirConfig()
-    handleTimerGeneral(setAnimarConfigIcon)
-    handleTimerGeneral(setAnimarVida, 150)
   }
   const handleClick = () => {
     vaciarLocalStorage()
@@ -271,7 +271,7 @@ export const App = () => {
           setCantLetras([])
         } else {
           sumarIntentos(1)
-          handleTimerGeneral(setAnimarVida)
+          handleTimerGeneral(setAnimarCantLetras, 10)
           const vidasDiferencia = vidasRestantes - 1;
           setVidasRestantes(vidasDiferencia);
         }
@@ -300,7 +300,7 @@ export const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimar(true)
-      setAnimarVida(true)
+      setAnimarCantLetras(true)
     }, 10)
 
     return () => clearTimeout(timer)
@@ -314,7 +314,7 @@ export const App = () => {
     }
   }, [respuestas.length, resuelto, vidasRestantes])
 
-
+  console.log(animarCantLetras)
 
   return (
     <div className={`w-full h-full box-border ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
@@ -372,7 +372,7 @@ export const App = () => {
               <div className={`flex gap-2 text-2xl animate-tresCorazones shadow-custom-1  flex-wrap  `}>
                 {Array.from({ length: totalVidas }, (_, i) => (
                   <span key={i} className={i < vidasRestantes ? `text-red-500 text-5xl ${corazonesAnimacion()} ` :
-                    `text-gray-400 text-5xl ${animarVida ? "animate-shake" : ""}`}>
+                    `text-gray-400 text-5xl ${animarCantLetras ? "animate-shake" : ""}`}>
                     ♥
                   </span>
                 ))}
@@ -390,7 +390,7 @@ export const App = () => {
 
             {cantLetras.map((l) => (
               <div key={l} className={`w-[60px] h-[60px] border-2 z-10  flex items-center justify-center text-2xl font-bold uppercase 
-                ${animarVida ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
+                ${animarCantLetras ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
                ${modoOscuro ? "bg-gray-600 border-white" : " bg-white border-red-700"}  transition-all ease-in-out delay-75 
                duration-700 transform rounded-sm `}>
               </div>
