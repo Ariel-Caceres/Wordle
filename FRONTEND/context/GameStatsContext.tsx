@@ -33,7 +33,7 @@ export const GameStatsProvider = ({ children }: { children: ReactNode }) => {
         vidasGanadas: number;
         palabrasResueltas: string[];
     }>(() => {
-        const statsLS = localStorage.getItem("stats");
+        const statsLS = localStorage.getItem("gameStats");
         return statsLS
             ? JSON.parse(statsLS)
             : {
@@ -70,7 +70,7 @@ export const GameStatsProvider = ({ children }: { children: ReactNode }) => {
     }
 
     useEffect(() => {
-        localStorage.setItem("stats", JSON.stringify(stats))
+        localStorage.setItem("gameStats", JSON.stringify(stats))
     }, [stats])
 
     return (

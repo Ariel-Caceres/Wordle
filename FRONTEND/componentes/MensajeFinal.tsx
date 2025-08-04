@@ -16,7 +16,7 @@ export const MensajeFinal = ({ mensajeFinal }: { mensajeFinal: string }) => {
             {mensajeFinal?.split("").map((l, i) =>
                 <div
                     key={i}
-                    className={`transition-all ease-in-out delay-75 duration-750 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} w-[40px] h-[40px] cursor-pointer delay-300 text-white 
+                    className={`transition-all ease-in-out delay-75 duration-150 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} w-[40px] h-[40px] cursor-pointer delay-300 text-white 
             ${mensajeFinal === "perdiste"
                             ? modoOscuro
                                 ? "bg-orange-600 animate-girar hover:animate-none"

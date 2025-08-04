@@ -71,13 +71,18 @@ export const App = () => {
       handleTimerGeneral(setAnimarConfigIcon)
     }
     setModalAbierto(null)
+    handleTimerGeneral(setAnimarVida, 150)
+
   }
   const handleClickStats = () => {
     abrirStats()
+    handleTimerGeneral(setAnimarVida, 150)
     handleTimerGeneral(setAnimarStatsIcon)
   }
   const handleClickIntro = () => {
     abrirIntro()
+    handleTimerGeneral(setAnimarVida, 150)
+
     handleTimerGeneral(setAnimarIntroIcon)
   }
   const updateWord = async (respuesta: string) => {
@@ -143,12 +148,24 @@ export const App = () => {
     }, delay)
 
   }
-
-
   const handleClickConfig = () => {
     abrirConfig()
     handleTimerGeneral(setAnimarConfigIcon)
-
+    handleTimerGeneral(setAnimarVida, 150)
+  }
+  const handleClick = () => {
+    vaciarLocalStorage()
+    setCartelVidas(vidasRestantes == 0 ? true : false)
+  }
+  const handleClickContinue = () => {
+    vaciarStats()
+    setCartelVidas(false)
+    setRespuestaCorrecta("");
+    vaciarRespuestas()
+    setFinJuego(false);
+    setResuelto(false)
+    setLetras([])
+    setVidasRestantes(5)
   }
 
   //FETCH DE LA PALABRA
@@ -183,7 +200,6 @@ export const App = () => {
     fetchData(dificultad, idioma)
 
   }, [finJuego, vidasRestantes, respuestas, dificultad, idioma])
-
 
 
   //Ingreso Letras
@@ -284,6 +300,7 @@ export const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimar(true)
+      setAnimarVida(true)
     }, 10)
 
     return () => clearTimeout(timer)
@@ -297,23 +314,7 @@ export const App = () => {
     }
   }, [respuestas.length, resuelto, vidasRestantes])
 
-  const handleClick = () => {
-    vaciarLocalStorage()
-    setCartelVidas(vidasRestantes == 0 ? true : false)
-  }
 
-  const handleClickContinue = () => {
-    vaciarStats()
-    setCartelVidas(false)
-    setRespuestaCorrecta("");
-    vaciarRespuestas()
-    setFinJuego(false);
-    setResuelto(false)
-    setLetras([])
-    setVidasRestantes(5)
-  }
-
-  console.log(finJuego)
 
   return (
     <div className={`w-full h-full box-border ${modoOscuro ? "bg-black text-white" : "bg-white text-black"}`}>
@@ -363,6 +364,7 @@ export const App = () => {
               ))}
             </div>
             <aside className={`${modoOscuro ? "bg-gray-600 border-white text-white" : "bg-white"}  
+            ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 translate-x-5"}
             z-10  w-1/6 top-0 right-1/8 flex-wrap  border-2 flex absolute text-black cursor-pointer flex-col 
             items-center rounded-md hover:shadow-md shadow-white transition-all ease-in-out delay-75 duration-900 
             ` }>
@@ -378,7 +380,7 @@ export const App = () => {
             </aside>
           </div>
 
-          <div className={`flex gap-2   justify-center mb-5 transition-all delay-150 duration-750 ease-in-out ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} `}>
+          <div className={`flex gap-2   justify-center mb-5 transition-all delay-150 duration-750 ease-in-out  ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}  `}>
 
             {letras.map((letra, i) => (
               <div key={i} className={` w-[60px] h-[60px] border-2  border-red-400 flex items-center justify-center  text-2xl font-bold uppercase transition-all ease-in-out delay-150 duration-150 rounded-sm ${modoOscuro ? "border-white" : ""} `}>
@@ -387,7 +389,10 @@ export const App = () => {
             ))}
 
             {cantLetras.map((l) => (
-              <div key={l} className={`w-[60px] h-[60px] border-2 z-10  flex items-center justify-center text-2xl font-bold uppercase  ${modoOscuro ? "bg-gray-600 border-white" : " bg-white border-red-700"}  transition-all ease-in-out delay-75 duration-700 transform rounded-sm `}>
+              <div key={l} className={`w-[60px] h-[60px] border-2 z-10  flex items-center justify-center text-2xl font-bold uppercase 
+                ${animarVida ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
+               ${modoOscuro ? "bg-gray-600 border-white" : " bg-white border-red-700"}  transition-all ease-in-out delay-75 
+               duration-700 transform rounded-sm `}>
               </div>
             )
             )}
@@ -419,9 +424,8 @@ export const App = () => {
               <span>Te quedaste sin vidas</span>
               <p>Al jugar de nuevo vas a perder todos tus stats</p>
               <div>
-                <button className={`px-2 py-2 border-2 rounded-md ${modoOscuro ? "bg-white text-black" : "bg-black text-white border-white"}`} onClick={() => setCartelVidas(false)}>Cancelar</button>
-                <button className={`px-2 py-2 border-2 rounded-md ${modoOscuro ? "bg-black text-white border-white" : "bg-white text-black"}`} onClick={handleClickContinue}>Continuar</button>
-
+                <button className={`px-2 py-2 border-4 cursor-pointer rounded-md ${modoOscuro ? "bg-white text-black border-gray-400" : "bg-black text-white  border-white"}`} onClick={() => setCartelVidas(false)} >Cancelar</button>
+                <button className={`px-2 py-2 border-2 cursor-pointer rounded-md ${modoOscuro ? "bg-black text-white border-white" : "bg-white text-black"}`} onClick={handleClickContinue}>Continuar</button>
               </div>
             </div>
           }

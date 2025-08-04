@@ -26,7 +26,7 @@ export const Header = ({ animar, cerrarModal, animarLogo, animarStatsIcon, anima
                  hover:border-white hover:inset-ring-2 cursor-pointer rounded-xl
                   transition-all ease-in-out delay-75 duration-250 transform 
                   ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
-                  `} onClick={handleClickStats}
+                  `}
             >
                 <a href="https://github.com/Ariel-Caceres" target="_blank" className=''>
                     <i className="fa-brands fa-github"></i>

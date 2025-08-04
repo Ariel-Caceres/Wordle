@@ -98,7 +98,7 @@ export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
                 <div className="w-[40%] flex justify-between">
                     <span className="cursor-default">cambiar dificultad
                     </span>
-                    <i className={`${dificultad === 1 ? "animate-giroX" : dificultad === 2 ? "animate-shake" : "animate-girarIconos"} text-xl fa-solid fa-brain`}></i>
+                    <i className={`${dificultad === 1 ? "animate-shake" : dificultad === 2 ? "animate-giroX" : "animate-girarIconos"} text-xl fa-solid fa-brain`}></i>
                 </div>
                 <select name="selectDificultades" id="2" onChange={handleChangeDificultad} value={dificultad} className=" 
                  cursor-pointer px-5 py-2 left-60 transition-all ease-in-out duration-750 
@@ -141,6 +141,7 @@ export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
                     <div className="w-full flex justify-center gap-5 ">
                         <button className={`px-2 py-2 border-2 cursor-pointer rounded-md ${modoOscuro ? "bg-white text-black border-gray-400 border-4" : "bg-black text-white border-white"}`} onClick={() => setAdvertecia(false)} >Cancelar</button>
                         <button className={`px-2 py-2 border-2 cursor-pointer rounded-md ${modoOscuro ? "bg-black text-white border-white" : "bg-white text-black"}`} onClick={handleChangeContinuar}>Continuar</button>
+
                     </div>
                 </div>
             }

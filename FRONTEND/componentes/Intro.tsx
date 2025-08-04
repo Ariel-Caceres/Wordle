@@ -1,7 +1,6 @@
 import { useGameStats } from "../context/useGameStats.tsx"
 import { useGameConfig } from "../context/useGameConfig.tsx"
 import { useGameState } from "../context/useGameState.tsx"
-import { useEffect, useState } from "react"
 
 export interface Mostrar {
     onClose: () => void
