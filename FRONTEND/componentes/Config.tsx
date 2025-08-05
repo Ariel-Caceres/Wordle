@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useGameConfig } from "../context/useGameConfig"
 import { useGameState } from "../context/useGameState"
 import { useGameStats } from "../context/useGameStats"
 
 interface AsideType {
     handleClickConfig: () => void
-    setFinjuego: (valor: boolean) => void
+    setFinJuego: (valor: boolean) => void
 }
 
-export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
+export const Config = ({ handleClickConfig, setFinJuego }: AsideType) => {
     const { modoOscuro, setModoOscuro, idioma, dificultad, setDificultad, setIdioma, dificultades, idiomas } = useGameConfig()
-    const { vaciarGameState, respuestas } = useGameState()
+    const { vaciarGameState, respuestas, vidasRestantes } = useGameState()
     const { vaciarStats } = useGameStats()
-    const [advertencia, setAdvertecia] = useState<boolean>(false)
+    const [advertencia, setAdvertencia] = useState<boolean>(false)
     const [dificultadACambiar, setDificultadACambiar] = useState<number>()
     const [idiomaACambiar, setIdiomaACambiar] = useState<number>()
 
@@ -20,15 +20,20 @@ export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
         if (respuestas.length === 0) {
             vaciarGameState()
             setDificultad(Number(e.target.value))
-        } else if (respuestas.length === 5) {
+        } else if (respuestas.length === 5 && vidasRestantes === 0) {
+            setAdvertencia(true)
+            setDificultadACambiar(Number(e.target.value))
+        }
+        else if (respuestas.length === 5) {
             setDificultad(Number(e.target.value))
             vaciarGameState()
             vaciarStats()
-            setFinjuego(false)
-        } else {
-            setDificultadACambiar(Number(e.target.value))
-            setAdvertecia(true)
+            setFinJuego(false)
+        }
 
+        else {
+            setDificultadACambiar(Number(e.target.value))
+            setAdvertencia(true)
         }
     }
 
@@ -36,14 +41,19 @@ export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
         if (respuestas.length === 0) {
             vaciarGameState()
             setIdioma(Number(e.target.value))
+
+        } else if (respuestas.length === 5 && vidasRestantes === 0) {
+            setAdvertencia(true)
+            setIdiomaACambiar(Number(e.target.value))
+
         } else if (respuestas.length === 5) {
             setIdioma(Number(e.target.value))
             vaciarGameState()
             vaciarStats()
-            setFinjuego(false)
+            setFinJuego(false)
         } else {
             setIdiomaACambiar(Number(e.target.value))
-            setAdvertecia(true)
+            setAdvertencia(true)
         }
     }
 
@@ -56,8 +66,8 @@ export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
         if (idiomaACambiar) {
             setIdioma(idiomaACambiar)
         }
-        setFinjuego(false)
-        setAdvertecia(false)
+        setFinJuego(false)
+        setAdvertencia(false)
     }
 
 
@@ -111,7 +121,7 @@ export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
 
             </div>
 
-            <div className="flex mb-10  hover:ring-2
+            <div className="flex mb-10 hover:ring-2
              hover:rounded-md border-b-2 border-gray-600 rounded-md 
              w-[90%] items-center  gap-3 justify-between p-4">
                 <div className="w-[40%] justify-between flex">
@@ -135,13 +145,24 @@ export const Config = ({ handleClickConfig, setFinjuego }: AsideType) => {
 
 
             {advertencia &&
-                <div className="justify-center flex absolute items-center flex-col w-full h-full bg-black text-white z-20 gap-10 ">
+                <div className={`justify-center flex absolute items-center flex-col w-full h-full z-20 gap-10 
+                ${modoOscuro ? "border-white bg-black text-white" : "border-black bg-white text-black"} `}>
                     <span className="font-press text-3xl border-2 py-4 px-4 rounded-2xl bg-red-400">!</span>
-                    <span>Vas a perder todo los datos de la partida actual</span>
+                    {vidasRestantes == 0 ?
+                        <div className="flex text-center justify-center flex-col">
+                            <span>Te quedaste sin vidas</span>
+                            <p>Al jugar de nuevo vas a perder todos tus stats</p>
+                        </div>
+                        :
+                        <span>Vas a perder todo los datos de la partida actual</span>
+                    }
                     <div className="w-full flex justify-center gap-5 ">
-                        <button className={`px-2 py-2 border-2 cursor-pointer rounded-md ${modoOscuro ? "bg-white text-black border-gray-400 border-4" : "bg-black text-white border-white"}`} onClick={() => setAdvertecia(false)} >Cancelar</button>
-                        <button className={`px-2 py-2 border-2 cursor-pointer rounded-md ${modoOscuro ? "bg-black text-white border-white" : "bg-white text-black"}`} onClick={handleChangeContinuar}>Continuar</button>
-
+                        <button className={`px-2 py-2 border-2 cursor-pointer rounded-md 
+                            ${modoOscuro ? "bg-white text-black border-gray-400 border-4" : "bg-black text-white border-white"}`}
+                            onClick={() => setAdvertencia(false)} >Cancelar</button>
+                        <button className={`px-2 py-2 border-2 cursor-pointer rounded-md 
+                            ${modoOscuro ? "bg-black text-white border-white" : "bg-white text-black"}`}
+                            onClick={handleChangeContinuar}>Continuar</button>
                     </div>
                 </div>
             }
